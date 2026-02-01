@@ -1,0 +1,21 @@
+app-id: com.taliskerman.rheolwyr
+runtime: org.gnome.Platform
+runtime-version: "46"
+sdk: org.gnome.Sdk
+command: rheolwyr
+finish-args:
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+modules:
+  - name: rheolwyr
+    buildsystem: simple
+    build-options:
+      build-args:
+        - --share=network
+    build-commands:
+      - pip3 install --prefix=/app --no-deps .
+    sources:
+      - type: dir
+        path: .

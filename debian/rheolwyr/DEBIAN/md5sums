@@ -1,0 +1,11 @@
+59377100dedddb9d4931e3527620eccc  usr/bin/rheolwyr
+d41d8cd98f00b204e9800998ecf8427e  usr/lib/python3/dist-packages/__init__.py
+a331a01491f8a901f3e588bb13e31c90  usr/lib/python3/dist-packages/database.py
+5be1bcc20ef52c580f5b85139b2836b7  usr/lib/python3/dist-packages/main.py
+c72246579c4437c07cebb86fbcbc6d90  usr/lib/python3/dist-packages/rheolwyr-0.1.0.dist-info/INSTALLER
+5cec07483aa4aa9a2d00986f1661eb60  usr/lib/python3/dist-packages/rheolwyr-0.1.0.dist-info/METADATA
+a227bf38fb17005b3bdb56ccc428b1bb  usr/lib/python3/dist-packages/rheolwyr-0.1.0.dist-info/WHEEL
+625b844f4c54fb0661d4a02a5bd5da6d  usr/lib/python3/dist-packages/rheolwyr-0.1.0.dist-info/entry_points.txt
+a0e934cf4bb9a7364400dc72c5bbebe7  usr/lib/python3/dist-packages/rheolwyr-0.1.0.dist-info/top_level.txt
+f5db037366ac9c29f2792ba850721b1e  usr/lib/python3/dist-packages/window.py
+3deb67fdbbd996d52a3378cadf4c5973  usr/share/doc/rheolwyr/changelog.Debian.gz

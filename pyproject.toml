@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rheolwyr"
+version = "0.1.0"
+description = "Linux-native text expander for GNOME and Cosmic"
+readme = "README.md"
+authors = [
+  { name="Chuck Talk", email="cwtalk1@gmail.com" },
+]
+license = { file = "LICENSE" }
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: X11 Applications :: GTK",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "PyGObject",
+]
+
+[project.scripts]
+rheolwyr = "rheolwyr.main:main"
+
+[tool.setuptools.package-data]
+rheolwyr = ["*.db"]

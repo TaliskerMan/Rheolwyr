@@ -1,0 +1,13 @@
+Package: rheolwyr
+Version: 0.1.0-1
+Architecture: all
+Maintainer: Chuck Talk <cwtalk1@gmail.com>
+Installed-Size: 70
+Depends: python3-gi, python3:any, gir1.2-gtk-4.0, gir1.2-adw-1
+Section: utils
+Priority: optional
+Homepage: https://github.com/TaliskerMan/rheolwyr
+Description: Linux snippet manager
+ Rheolwyr is a text expander and snippet manager designed for the modern Linux
+ desktop (GNOME/Cosmic). It allows users to store and manage text snippets
+ with support for keyboard triggers.
