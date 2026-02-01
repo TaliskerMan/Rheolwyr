@@ -11,17 +11,28 @@ gi.require_version('Adw', '1')
 
 from gi.repository import Gtk, Adw, Gio, GLib
 from window import RheolwyrWindow
+from listener import SnippetListener
 
 class RheolwyrApp(Adw.Application):
     def __init__(self):
         super().__init__(application_id='com.taliskerman.rheolwyr',
                          flags=Gio.ApplicationFlags.FLAGS_NONE)
         self.window = None
+        self.listener = None
+
+    def do_shutdown(self):
+        if self.listener:
+            self.listener.stop()
+        Adw.Application.do_shutdown(self)
 
     def do_activate(self):
         if not self.window:
             self.window = RheolwyrWindow(self)
         self.window.present()
+        
+        # Start listener
+        self.listener = SnippetListener()
+        self.listener.start()
 
     def do_startup(self):
         Adw.Application.do_startup(self)
