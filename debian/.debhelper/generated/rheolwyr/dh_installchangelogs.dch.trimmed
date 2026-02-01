@@ -1,5 +1,14 @@
-rheolwyr (0.1.0-1) unstable; urgency=medium
+rheolwyr (0.2.0) unstable; urgency=medium
 
-  * Initial release.
+  * Release 0.2.0
+  * Added text expansion functionality using pynput and pyclip
+  * Added SnippetListener for background monitoring
+  * Updated dependencies
+
+ -- Chuck Talk <cwtalk1@gmail.com>  Sun, 01 Feb 2026 15:30:00 -0600
+
+rheolwyr (0.1.0) unstable; urgency=medium
+
+  * Initial release
 
  -- Chuck Talk <cwtalk1@gmail.com>  Sun, 01 Feb 2026 12:00:00 -0600
