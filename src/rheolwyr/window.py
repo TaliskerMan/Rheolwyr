@@ -8,6 +8,7 @@ gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
 from gi.repository import Gtk, Adw, Gio, GObject
 from .database import Database
+from . import config
 
 class RheolwyrWindow(Adw.ApplicationWindow):
     def __init__(self, app):
@@ -15,6 +16,10 @@ class RheolwyrWindow(Adw.ApplicationWindow):
         self.db = Database()
         self.current_snippet_id = None
         
+        # Apply persisted theme
+        initial_scheme = config.get_theme_scheme()
+        self.set_theme(initial_scheme, save=False)
+
         self.set_default_size(800, 600)
         
         # Main Layout
@@ -220,9 +225,11 @@ class RheolwyrWindow(Adw.ApplicationWindow):
             self.delete_btn.set_sensitive(False)
             self.load_snippets()
 
-    def set_theme(self, scheme):
+    def set_theme(self, scheme, save=True):
         manager = Adw.StyleManager.get_default()
         manager.set_color_scheme(scheme)
+        if save:
+            config.set_theme_preference(scheme)
 
     def on_about_action(self, action, param):
         about = Adw.AboutWindow(
