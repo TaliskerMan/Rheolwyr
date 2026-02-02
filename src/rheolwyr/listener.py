@@ -2,7 +2,7 @@ import time
 import threading
 from pynput import keyboard
 from pynput.keyboard import Key, KeyCode, Controller
-import pyclip
+from . import clipboard
 from .database import Database
 
 class SnippetListener:
@@ -76,12 +76,13 @@ class SnippetListener:
             self.keyboard_controller.tap(Key.backspace)
         
         # 2. Copy content to clipboard
+        # 2. Copy content to clipboard
         try:
-            old_clipboard = pyclip.paste().decode('utf-8')
+            old_clipboard = clipboard.paste().decode('utf-8')
         except:
             old_clipboard = ""
 
-        pyclip.copy(content)
+        clipboard.copy(content)
         
         # 3. Paste
         # We need to be careful about shortcuts. Ctrl+V is standard for GUI.

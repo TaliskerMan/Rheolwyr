@@ -46,15 +46,6 @@ modules:
         url: https://files.pythonhosted.org/packages/59/4f/ac3fa906ae8a375a536b12794128c5efacade9eaa917a35dfd27ce0c7400/pynput-1.8.1-py2.py3-none-any.whl
         sha256: 42dfcf27404459ca16ca889c8fb8ffe42a9fe54f722fd1a3e130728e59e768d2
 
-  - name: python-pyclip
-    buildsystem: simple
-    build-commands:
-      - pip3 install --prefix=/app --no-deps --no-build-isolation *.whl
-    sources:
-      - type: file
-        url: https://files.pythonhosted.org/packages/7d/4f/4b02e2c232ddf694bca0baea3049b886eeb80ee3d89c415067f5191596c1/pyclip-0.7.0-py3-none-any.whl
-        sha256: a7b7ea2cfad2dd61e86a529af588d006070d3eb0bd32981afaee5215f4604fec
-
   - name: rheolwyr
     buildsystem: simple
     build-options:
