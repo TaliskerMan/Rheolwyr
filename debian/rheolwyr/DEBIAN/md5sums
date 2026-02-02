@@ -10,4 +10,6 @@ c72246579c4437c07cebb86fbcbc6d90  usr/lib/python3/dist-packages/rheolwyr-0.2.0.d
 cf209cbb94cdcd440bf3b5ba89e9cc7c  usr/lib/python3/dist-packages/rheolwyr-0.2.0.dist-info/top_level.txt
 5c4a09bd291416a30910d4863e1ab8e3  usr/lib/python3/dist-packages/test_listener.py
 f5db037366ac9c29f2792ba850721b1e  usr/lib/python3/dist-packages/window.py
+59afb4d855fcc4c7de95e87c79cb123b  usr/share/applications/com.taliskerman.rheolwyr.desktop
 37eed6631cf24c73893e30363d9f5192  usr/share/doc/rheolwyr/changelog.gz
+811da1e692ca2f6191c00b4a5c50dfdc  usr/share/icons/hicolor/scalable/apps/com.taliskerman.rheolwyr.svg
