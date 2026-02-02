@@ -36,6 +36,13 @@ class RheolwyrWindow(Adw.ApplicationWindow):
         theme_menu.append("System", "win.theme-system")
         theme_menu.append("Light", "win.theme-light")
         theme_menu.append("Dark", "win.theme-dark")
+        # Add separator logic or just append
+        # Gio.Menu doesn't have a simple separator method in minimal usage, usually handled by sections.
+        # We'll just create a section for About to separate it visually if possible, or just append.
+        
+        section = Gio.Menu()
+        section.append("About Rheolwyr", "win.about")
+        theme_menu.append_section(None, section)
 
         theme_btn = Gtk.MenuButton(icon_name="open-menu-symbolic")
         theme_btn.set_menu_model(theme_menu)
@@ -53,6 +60,10 @@ class RheolwyrWindow(Adw.ApplicationWindow):
         action_dark = Gio.SimpleAction.new("theme-dark", None)
         action_dark.connect("activate", lambda a, p: self.set_theme(Adw.ColorScheme.FORCE_DARK))
         self.add_action(action_dark)
+        
+        action_about = Gio.SimpleAction.new("about", None)
+        action_about.connect("activate", self.on_about_action)
+        self.add_action(action_about)
         sidebar_box.append(sidebar_header)
         
         # ListBox for snippets
@@ -211,3 +222,17 @@ class RheolwyrWindow(Adw.ApplicationWindow):
     def set_theme(self, scheme):
         manager = Adw.StyleManager.get_default()
         manager.set_color_scheme(scheme)
+
+    def on_about_action(self, action, param):
+        about = Adw.AboutWindow(
+            transient_for=self,
+            application_name="Rheolwyr",
+            application_icon="com.taliskerman.rheolwyr",
+            developer_name="Chuck Talk",
+            version="0.3.3",
+            comments="Linux-native text expander for GNOME and Cosmic",
+            website="https://github.com/TaliskerMan/Rheolwyr",
+            copyright="© 2026 Chuck Talk",
+            license_type=Gtk.License.GPL_3_0
+        )
+        about.present()
