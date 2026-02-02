@@ -17,9 +17,9 @@ class TestListener(unittest.TestCase):
         self.mock_db_cls = self.db_patcher.start()
         self.mock_db = self.mock_db_cls.return_value
         
-        # Patch pyclip
-        self.pyclip_patcher = patch('rheolwyr.listener.pyclip')
-        self.mock_pyclip = self.pyclip_patcher.start()
+        # Patch clipboard
+        self.clipboard_patcher = patch('rheolwyr.listener.clipboard')
+        self.mock_clipboard = self.clipboard_patcher.start()
         
         # Patch Controller
         self.controller_patcher = patch('rheolwyr.listener.Controller')
@@ -35,7 +35,7 @@ class TestListener(unittest.TestCase):
 
     def tearDown(self):
         self.db_patcher.stop()
-        self.pyclip_patcher.stop()
+        self.clipboard_patcher.stop()
         self.controller_patcher.stop()
         self.keyboard_listener_patcher.stop()
 
@@ -78,7 +78,7 @@ class TestListener(unittest.TestCase):
         self.assertEqual(self.mock_controller.tap.call_count, len(trigger) + 1) # +1 for 'v'
         
         # Verify clipboard copy
-        self.mock_pyclip.copy.assert_called_with(content)
+        self.mock_clipboard.copy.assert_called_with(content)
         
         # Verify paste (ctrl+v)
         self.mock_controller.pressed.assert_called_with(Key.ctrl)
