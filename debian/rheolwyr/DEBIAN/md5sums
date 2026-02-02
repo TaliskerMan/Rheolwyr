@@ -1,9 +1,9 @@
 59377100dedddb9d4931e3527620eccc  usr/bin/rheolwyr
-c72246579c4437c07cebb86fbcbc6d90  usr/lib/python3/dist-packages/rheolwyr-0.3.3.dist-info/INSTALLER
-273b49889ede9026f4153498359d588f  usr/lib/python3/dist-packages/rheolwyr-0.3.3.dist-info/METADATA
-a227bf38fb17005b3bdb56ccc428b1bb  usr/lib/python3/dist-packages/rheolwyr-0.3.3.dist-info/WHEEL
-625b844f4c54fb0661d4a02a5bd5da6d  usr/lib/python3/dist-packages/rheolwyr-0.3.3.dist-info/entry_points.txt
-956250298bd9e81e28b2da8218c5b8cc  usr/lib/python3/dist-packages/rheolwyr-0.3.3.dist-info/top_level.txt
+c72246579c4437c07cebb86fbcbc6d90  usr/lib/python3/dist-packages/rheolwyr-0.3.4.dist-info/INSTALLER
+c29ff4bad107ef09d745b29dee14ed9f  usr/lib/python3/dist-packages/rheolwyr-0.3.4.dist-info/METADATA
+a227bf38fb17005b3bdb56ccc428b1bb  usr/lib/python3/dist-packages/rheolwyr-0.3.4.dist-info/WHEEL
+625b844f4c54fb0661d4a02a5bd5da6d  usr/lib/python3/dist-packages/rheolwyr-0.3.4.dist-info/entry_points.txt
+956250298bd9e81e28b2da8218c5b8cc  usr/lib/python3/dist-packages/rheolwyr-0.3.4.dist-info/top_level.txt
 d41d8cd98f00b204e9800998ecf8427e  usr/lib/python3/dist-packages/rheolwyr/__init__.py
 7467748e835ce59e3c87db2382395be7  usr/lib/python3/dist-packages/rheolwyr/clipboard.py
 45fc7fbe865d91aeb37ed19aa0bd714f  usr/lib/python3/dist-packages/rheolwyr/database.py
@@ -11,5 +11,5 @@ d41d8cd98f00b204e9800998ecf8427e  usr/lib/python3/dist-packages/rheolwyr/__init_
 8d1900b3ebdae6fb1a745df74d6d2da1  usr/lib/python3/dist-packages/rheolwyr/main.py
 72e66af7788946bcf024cf85405714b8  usr/lib/python3/dist-packages/rheolwyr/window.py
 59afb4d855fcc4c7de95e87c79cb123b  usr/share/applications/com.taliskerman.rheolwyr.desktop
-7ce5c26f2b17e7fdca0708ea841bcc85  usr/share/doc/rheolwyr/changelog.gz
-9c187536036c53fd4f8fa71ecae767b3  usr/share/icons/hicolor/scalable/apps/com.taliskerman.rheolwyr.svg
+0ea9f97b149bf00c0df53c0b90af5d83  usr/share/doc/rheolwyr/changelog.gz
+fadf1dcd1a6104c576a0e673545c9c36  usr/share/icons/hicolor/scalable/apps/com.taliskerman.rheolwyr.svg
