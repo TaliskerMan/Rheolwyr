@@ -61,7 +61,9 @@ modules:
       build-args:
         - --share=network
     build-commands:
-      - pip3 install --prefix=/app --no-deps --no-build-isolation .
+      - pip3 install --prefix=/app --no-deps .
+      - install -D data/com.taliskerman.rheolwyr.desktop /app/share/applications/com.taliskerman.rheolwyr.desktop
+      - install -D data/icons/hicolor/scalable/apps/com.taliskerman.rheolwyr.svg /app/share/icons/hicolor/scalable/apps/com.taliskerman.rheolwyr.svg
     sources:
       - type: dir
         path: .
