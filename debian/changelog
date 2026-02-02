@@ -1,3 +1,11 @@
+rheolwyr (0.3.3) unstable; urgency=medium
+
+  * Release 0.3.3
+  * Added "About Rheolwyr" dialog with license and credit information
+  * Supports custom application icon in About dialog
+
+ -- Chuck Talk <cwtalk1@gmail.com>  Sun, 01 Feb 2026 19:35:00 -0600
+
 rheolwyr (0.3.2) unstable; urgency=medium
 
   * Release 0.3.2
