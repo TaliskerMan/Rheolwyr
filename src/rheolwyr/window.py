@@ -30,6 +30,29 @@ class RheolwyrWindow(Adw.ApplicationWindow):
         add_btn = Gtk.Button(icon_name="list-add-symbolic")
         add_btn.connect("clicked", self.on_add_clicked)
         sidebar_header.pack_start(add_btn)
+
+        # Theme Switcher
+        theme_menu = Gio.Menu()
+        theme_menu.append("System", "win.theme-system")
+        theme_menu.append("Light", "win.theme-light")
+        theme_menu.append("Dark", "win.theme-dark")
+
+        theme_btn = Gtk.MenuButton(icon_name="open-menu-symbolic")
+        theme_btn.set_menu_model(theme_menu)
+        sidebar_header.pack_end(theme_btn)
+        
+        # Theme Actions
+        action_system = Gio.SimpleAction.new("theme-system", None)
+        action_system.connect("activate", lambda a, p: self.set_theme(Adw.ColorScheme.DEFAULT))
+        self.add_action(action_system)
+        
+        action_light = Gio.SimpleAction.new("theme-light", None)
+        action_light.connect("activate", lambda a, p: self.set_theme(Adw.ColorScheme.FORCE_LIGHT))
+        self.add_action(action_light)
+        
+        action_dark = Gio.SimpleAction.new("theme-dark", None)
+        action_dark.connect("activate", lambda a, p: self.set_theme(Adw.ColorScheme.FORCE_DARK))
+        self.add_action(action_dark)
         sidebar_box.append(sidebar_header)
         
         # ListBox for snippets
@@ -184,3 +207,7 @@ class RheolwyrWindow(Adw.ApplicationWindow):
             self.save_btn.set_sensitive(False)
             self.delete_btn.set_sensitive(False)
             self.load_snippets()
+
+    def set_theme(self, scheme):
+        manager = Adw.StyleManager.get_default()
+        manager.set_color_scheme(scheme)
