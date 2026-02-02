@@ -2,6 +2,7 @@
 # Copyright (C) 2026 Chuck Talk <cwtalk1@gmail.com>
 # Licensed under GPLv3 or later
 
+import importlib.metadata
 import gi
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
@@ -229,7 +230,7 @@ class RheolwyrWindow(Adw.ApplicationWindow):
             application_name="Rheolwyr",
             application_icon="com.taliskerman.rheolwyr",
             developer_name="Chuck Talk",
-            version="0.3.3",
+            version=importlib.metadata.version('rheolwyr'),
             comments="Linux-native text expander for GNOME and Cosmic",
             website="https://github.com/TaliskerMan/Rheolwyr",
             copyright="© 2026 Chuck Talk",
