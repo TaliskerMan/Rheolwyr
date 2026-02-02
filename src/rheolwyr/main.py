@@ -10,8 +10,8 @@ gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
 
 from gi.repository import Gtk, Adw, Gio, GLib
-from window import RheolwyrWindow
-from listener import SnippetListener
+from .window import RheolwyrWindow
+from .listener import SnippetListener
 
 class RheolwyrApp(Adw.Application):
     def __init__(self):

@@ -3,7 +3,7 @@ import threading
 from pynput import keyboard
 from pynput.keyboard import Key, KeyCode, Controller
 import pyclip
-from database import Database
+from .database import Database
 
 class SnippetListener:
     def __init__(self):

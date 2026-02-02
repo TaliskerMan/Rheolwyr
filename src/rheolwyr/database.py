@@ -2,12 +2,19 @@
 # Copyright (C) 2026 Chuck Talk <cwtalk1@gmail.com>
 # Licensed under GPLv3 or later
 
+import os
 import sqlite3
 from typing import List, Optional, Tuple
+from gi.repository import GLib
 
 class Database:
-    def __init__(self, db_path: str = "snippets.db"):
-        self.db_path = db_path
+    def __init__(self, db_path: str = None):
+        if db_path is None:
+            data_dir = os.path.join(GLib.get_user_data_dir(), "rheolwyr")
+            os.makedirs(data_dir, exist_ok=True)
+            self.db_path = os.path.join(data_dir, "snippets.db")
+        else:
+            self.db_path = db_path
         self._init_db()
 
     def _init_db(self):

@@ -1,8 +1,8 @@
 Package: rheolwyr
-Version: 0.2.0
+Version: 0.3.0
 Architecture: all
 Maintainer: Chuck Talk <cwtalk1@gmail.com>
-Installed-Size: 84
+Installed-Size: 82
 Depends: python3-gi, python3-pynput, python3:any, gir1.2-gtk-4.0, gir1.2-adw-1, xclip | wl-clipboard
 Section: utils
 Priority: optional

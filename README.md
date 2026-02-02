@@ -20,7 +20,9 @@ Rheolwyr ("Manager" in Welsh) is a Linux-native text snippet manager designed fo
    ```
 2. Run the application:
    ```bash
-   python src/main.py
+   python -m rheolwyr.main
+   # Or after pip install .
+   rheolwyr
    ```
 
 ## Tech Stack
