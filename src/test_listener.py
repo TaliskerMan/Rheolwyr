@@ -6,28 +6,28 @@ import os
 # Add src to path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from listener import SnippetListener
+from rheolwyr.listener import SnippetListener
 # Now we can import real classes for typing/constants if needed, or mock them
 from pynput.keyboard import Key
 
 class TestListener(unittest.TestCase):
     def setUp(self):
         # Patch Database
-        self.db_patcher = patch('listener.Database')
+        self.db_patcher = patch('rheolwyr.listener.Database')
         self.mock_db_cls = self.db_patcher.start()
         self.mock_db = self.mock_db_cls.return_value
         
         # Patch pyclip
-        self.pyclip_patcher = patch('listener.pyclip')
+        self.pyclip_patcher = patch('rheolwyr.listener.pyclip')
         self.mock_pyclip = self.pyclip_patcher.start()
         
         # Patch Controller
-        self.controller_patcher = patch('listener.Controller')
+        self.controller_patcher = patch('rheolwyr.listener.Controller')
         self.mock_controller_cls = self.controller_patcher.start()
         self.mock_controller = self.mock_controller_cls.return_value
         
         # Patch Listener (the pynput listener) to avoid starting a real thread
-        self.keyboard_listener_patcher = patch('listener.keyboard.Listener')
+        self.keyboard_listener_patcher = patch('rheolwyr.listener.keyboard.Listener')
         self.mock_keyboard_listener = self.keyboard_listener_patcher.start()
         
         self.listener = SnippetListener()

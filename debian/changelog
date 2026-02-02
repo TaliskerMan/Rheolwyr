@@ -1,3 +1,12 @@
+rheolwyr (0.3.0) unstable; urgency=medium
+
+  * Release 0.3.0
+  * Fixed ModuleNotFoundError by restructuring source into 'rheolwyr' package
+  * Moved snippets.db to XDG_DATA_HOME/rheolwyr/snippets.db
+  * Updated build system configuration
+
+ -- Chuck Talk <cwtalk1@gmail.com>  Sun, 01 Feb 2026 18:27:00 -0600
+
 rheolwyr (0.2.0) unstable; urgency=medium
 
   * Release 0.2.0

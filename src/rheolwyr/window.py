@@ -6,7 +6,7 @@ import gi
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
 from gi.repository import Gtk, Adw, Gio, GObject
-from database import Database
+from .database import Database
 
 class RheolwyrWindow(Adw.ApplicationWindow):
     def __init__(self, app):
