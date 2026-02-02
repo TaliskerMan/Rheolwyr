@@ -1,3 +1,10 @@
+rheolwyr (0.3.5) UNRELEASED; urgency=medium
+
+  * Release 0.3.5: Updated application icon to includ scalable SVG and
+    improved packaging.
+
+ -- Free Code <freecode@cosmo>  Sun, 01 Feb 2026 20:12:21 -0600
+
 rheolwyr (0.3.4) unstable; urgency=medium
 
   * Release 0.3.4

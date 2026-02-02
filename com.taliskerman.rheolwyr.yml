@@ -55,6 +55,7 @@ modules:
       - pip3 install --prefix=/app --no-deps .
       - install -D data/com.taliskerman.rheolwyr.desktop /app/share/applications/com.taliskerman.rheolwyr.desktop
       - install -D data/icons/hicolor/512x512/apps/com.taliskerman.rheolwyr.png /app/share/icons/hicolor/512x512/apps/com.taliskerman.rheolwyr.png
+      - install -D data/icons/hicolor/scalable/apps/com.taliskerman.rheolwyr.svg /app/share/icons/hicolor/scalable/apps/com.taliskerman.rheolwyr.svg
     sources:
       - type: dir
         path: .
