@@ -1,3 +1,10 @@
+rheolwyr (0.3.6) unstable; urgency=medium
+
+  * Release 0.3.6
+  * Implement theme persistence
+
+ -- Chuck Talk <cwtalk1@gmail.com>  Mon, 02 Feb 2026 20:58:00 -0600
+
 rheolwyr (0.3.5) unstable; urgency=medium
 
   * Release 0.3.5
