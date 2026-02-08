@@ -59,6 +59,29 @@ Build using `flatpak-builder`:
 flatpak-builder --user --install build-dir com.taliskerman.rheolwyr.yml
 ```
 
+
+## Setup & Troubleshooting
+
+### Enabling Text Expansion (Wayland/Input)
+
+For text expansion to work, especially on Wayland, your user needs permission to monitor input devices and inject keys. The package installs a udev rule for `uinput`, but you must manually add your user to the required groups.
+
+1.  **Add your user to the `input` and `uinput` groups**:
+
+    ```bash
+    sudo usermod -aG input,uinput $USER
+    ```
+
+2.  **Log out and log back in**:
+    Group changes **will not take effect** until you log out of your desktop session and log back in (or reboot).
+
+### Common Issues
+
+-   **"Snippet not expanding"**:
+    -   Verify you are in the groups: run `groups` and look for `input` and `uinput`.
+    -   Ensure `rheolwyr` is running (check system tray).
+    -   If on Wayland, ensure you are not using a confined Flatpak without proper permissions (native `.deb` package recommended for best compatibility).
+
 ## License
 
 GPLv3
