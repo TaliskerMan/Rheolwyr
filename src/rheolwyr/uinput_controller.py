@@ -159,3 +159,8 @@ class UInputController:
                 self.ui.write(e.EV_KEY, ecode, 0)
                 self.ui.syn()
                 time.sleep(0.01)
+
+    def type(self, text):
+        """Type a string of characters."""
+        for char in text:
+            self.tap(char)

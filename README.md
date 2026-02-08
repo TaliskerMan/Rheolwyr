@@ -1,7 +1,7 @@
 # Rheolwyr
 
 Linux text expander.
-Version 0.3.6
+Version 0.4.1
 Rheolwyr ("Manager" in Welsh) is a Linux-native text snippet manager designed for Pop!_OS Cosmic and GNOME on Wayland.
 
 ## Features

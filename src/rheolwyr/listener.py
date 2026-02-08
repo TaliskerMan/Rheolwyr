@@ -147,34 +147,40 @@ class SnippetListener:
     def expand_snippet(self, trigger, content):
         print(f"DEBUG: Expanding snippet '{trigger}' -> '{content}'")
         # 1. Backspace the trigger
+        # We need to be careful not to delete too fast or too slow.
         for _ in range(len(trigger)):
             self.keyboard_controller.tap(Key.backspace)
+            time.sleep(0.01) # Small delay to ensure backspaces register
         
-        # 2. Copy content to clipboard
-        # 2. Copy content to clipboard
-        try:
-            old_clipboard = clipboard.paste().decode('utf-8')
-        except:
-            old_clipboard = ""
+        # 2. Inject content
+        # Strategy: Use direct typing for short snippets (more reliable on Wayland)
+        # Use clipboard for long snippets (faster)
+        
+        if len(content) < 50:
+            print("Using direct typing for expansion")
+            self.keyboard_controller.type(content)
+        else:
+            print("Using clipboard for expansion")
+            # 2a. Copy content to clipboard
+            try:
+                # Save old clipboard if possible (best effort)
+                old_clipboard = clipboard.paste().decode('utf-8')
+            except:
+                old_clipboard = ""
 
-        clipboard.copy(content)
-        
-        # 3. Paste
-        # We need to be careful about shortcuts. Ctrl+V is standard for GUI.
-        # Shift+Insert is standard for terminals.
-        # This is tricky without knowing the target window.
-        # Let's try sending keys directly first if it's short, or Ctrl+V if long?
-        # The prompt mentioned "copy snippet to clipboard.. simulate paste"
-        
-        # Let's try typing it out if it's short, it's more reliable than paste usually
-        # But for large snippets paste is better.
-        # Let's assume paste for now as per plan "copy content to clipboard... simulate paste"
-        
-        # Simulating Ctrl+V
-        with self.keyboard_controller.pressed(Key.ctrl):
-            self.keyboard_controller.tap('v')
+            clipboard.copy(content)
             
-        # Give it a moment, then restore clipboard?
-        # Text expanders usually restore clipboard. 
-        # But this might be too complex for V1.
-        time.sleep(0.1) 
+            # 2b. Paste
+            # Simulating Ctrl+V
+            # Note: In some terminals Ctrl+Shift+V is needed. This is hard to detect.
+            # But standard GTK/Cosmic apps use Ctrl+V.
+            time.sleep(0.1) # Wait for clipboard to update
+            
+            with self.keyboard_controller.pressed(Key.ctrl):
+                self.keyboard_controller.tap('v')
+                
+            # Give it a moment, then restore clipboard?
+            # Text expanders usually restore clipboard. 
+            time.sleep(0.2) 
+            if old_clipboard:
+                 clipboard.copy(old_clipboard)

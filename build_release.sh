@@ -40,9 +40,16 @@ else
 fi
 
 # 2. Build Debian Package
+# Clean previous artifacts
+rm -rf release_artifacts
+mkdir -p release_artifacts
+
 echo -e "\n${GREEN}[2/3] Building Debian Package...${NC}"
 dpkg-buildpackage -us -uc
-echo "Debian package built in parent directory."
+
+# Move artifacts to release_artifacts
+mv ../rheolwyr_* release_artifacts/ 2>/dev/null || true
+echo "Debian package built and moved to release_artifacts/"
 
 # 3. Build Flatpak
 echo -e "\n${GREEN}[3/3] Building Flatpak...${NC}"
@@ -50,15 +57,14 @@ REPO_DIR="repo"
 BUILD_DIR="build-dir"
 
 # Install Runtime if missing
-echo "Ensuring GNOME Runtime 46 is installed..."
-flatpak install -y --user org.gnome.Platform/x86_64/46 org.gnome.Sdk/x86_64/46 || true
+# echo "Ensuring GNOME Runtime 46 is installed..."
+# flatpak install -y --user org.gnome.Platform/x86_64/46 org.gnome.Sdk/x86_64/46 || true
 
 # Build
 flatpak-builder --user --force-clean --repo=$REPO_DIR $BUILD_DIR com.taliskerman.rheolwyr.yml
 echo "Flatpak built successfully."
 
 # Bundle
-flatpak build-bundle $REPO_DIR rheolwyr.flatpak com.taliskerman.rheolwyr
+flatpak build-bundle $REPO_DIR release_artifacts/rheolwyr.flatpak com.taliskerman.rheolwyr
 echo -e "${GREEN}SUCCESS!${NC}"
-echo " - DEB package: ../rheolwyr_*.deb"
-echo " - Flatpak bundle: rheolwyr.flatpak"
+echo " - Artifacts are in: release_artifacts/"

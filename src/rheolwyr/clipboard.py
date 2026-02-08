@@ -3,7 +3,8 @@ import shutil
 
 def is_wayland():
     import os
-    return "WAYLAND_DISPLAY" in os.environ
+    return "WAYLAND_DISPLAY" in os.environ or os.environ.get("XDG_SESSION_TYPE") == "wayland"
+
 
 def copy(text):
     text_bytes = text.encode('utf-8')
