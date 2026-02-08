@@ -1,4 +1,4 @@
-# Rheolwyr
+# <img src="docs/images/icon.png" width="48" height="48" align="center" alt="Rheolwyr Icon"> Rheolwyr
 
 Linux text expander.
 Version 0.4.1
@@ -12,6 +12,15 @@ Rheolwyr ("Manager" in Welsh) is a Linux-native text snippet manager designed fo
 - **Theme persistence**: Remembers your preferred theme.
 - **System Tray Support**: Runs in the background.
 - **Wayland & X11 Support**: Designed with modern Linux desktop standards.
+
+## Screenshots
+
+> **Note**: To add screenshots, place your image files in `docs/images/` and reference them here.
+
+### Main Interface
+*(Place `main_interface.png` in `docs/images/` and uncomment the line below)*
+<!-- ![Main Interface](docs/images/main_interface.png) -->
+
 
 ## Installation
 
