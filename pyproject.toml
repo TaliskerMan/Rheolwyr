@@ -21,6 +21,7 @@ classifiers = [
 dependencies = [
     "PyGObject",
     "pynput",
+    "evdev",
 ]
 
 [tool.setuptools.packages.find]

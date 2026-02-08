@@ -1,0 +1,28 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = "configure" ]; then
+    # Create uinput group if it doesn't exist
+    if ! getent group uinput >/dev/null; then
+        echo "Creating 'uinput' group..."
+        addgroup --system uinput
+    fi
+    
+    # Reload udev rules
+    if command -v udevadm >/dev/null; then
+        echo "Reloading udev rules..."
+        udevadm control --reload-rules || true
+        udevadm trigger || true
+    fi
+    
+    echo "----------------------------------------------------------------"
+    echo "Rheolwyr installed."
+    echo "IMPORTANT: To use text expansion on Wayland, you must satisfy"
+    echo "one of the following:"
+    echo "1. Add your user to the 'uinput' and 'input' groups:"
+    echo "   sudo usermod -aG input,uinput <username>"
+    echo "   (You must log out and log back in for this to take effect)"
+    echo "----------------------------------------------------------------"
+fi
+
+#DEBHELPER#

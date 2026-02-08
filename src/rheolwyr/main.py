@@ -31,8 +31,12 @@ class RheolwyrApp(Adw.Application):
         self.window.present()
         
         # Start listener
-        self.listener = SnippetListener()
-        self.listener.start()
+        try:
+            self.listener = SnippetListener()
+            self.listener.start()
+        except Exception as e:
+            print(f"Error starting listener: {e}")
+            self.window.show_error_dialog(str(e))
 
     def do_startup(self):
         Adw.Application.do_startup(self)

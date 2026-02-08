@@ -1,16 +1,63 @@
 import time
 import threading
+import os
 from pynput import keyboard
-from pynput.keyboard import Key, KeyCode, Controller
+from pynput.keyboard import Key, KeyCode, Controller as PynputController
 from . import clipboard
 from .database import Database
+try:
+    from .uinput_controller import UInputController
+except ImportError:
+    UInputController = None
 
 class SnippetListener:
     def __init__(self):
         self.db = Database()
         self.buffer = ""
         self.max_buffer_size = 50
-        self.keyboard_controller = Controller()
+        # Prefer UInputController if available (for Wayland support)
+        if UInputController:
+            try:
+                self.keyboard_controller = UInputController()
+                print("Using UInputController for injection")
+            except Exception as e:
+                print(f"Failed to initialize UInputController: {e}")
+                self.keyboard_controller = PynputController()
+        else:
+            self.keyboard_controller = PynputController()
+
+try:
+    from .evdev_listener import EvdevListener
+except ImportError:
+    EvdevListener = None
+
+class SnippetListener:
+    def __init__(self):
+        self.db = Database()
+        self.buffer = ""
+        self.max_buffer_size = 50
+        # Check for Wayland
+        self.is_wayland = os.environ.get("XDG_SESSION_TYPE", "").lower() == "wayland" or os.environ.get("WAYLAND_DISPLAY")
+        
+        self.keyboard_controller = None
+        
+        # Prefer UInputController if available (for Wayland support)
+        if self.is_wayland:
+            if UInputController:
+                try:
+                    self.keyboard_controller = UInputController()
+                    print("Using UInputController for injection")
+                except Exception as e:
+                    print(f"Failed to initialize UInputController: {e}")
+                    # On Wayland, failure to get UInput means we likely can't inject.
+                    # Raise error to notify user to check permissions.
+                    raise PermissionError(f"Failed to initialize UInput: {e}\nPlease ensure you are in the 'uinput' group.")
+            else:
+                 raise ImportError("evdev not found. Please install python3-evdev.")
+        else:
+             # X11 fallback
+             self.keyboard_controller = PynputController()
+
         self.listener = None
         self.running = False
 
@@ -18,8 +65,35 @@ class SnippetListener:
         if self.running:
             return
         self.running = True
-        self.listener = keyboard.Listener(on_press=self.on_press)
-        self.listener.start()
+        
+        # Use EvdevListener if on Wayland and available
+        if self.is_wayland:
+            if EvdevListener:
+                print("Starting EvdevListener (Wayland detected)...")
+                try:
+                    self.listener = EvdevListener(on_press=self.on_press)
+                    self.listener.start()
+                    
+                    # Verify if listener actually found devices
+                    # Wait a bit for thread to start?
+                    # logic inside EvdevListener.start checks for keyboards.
+                    # We might want EvdevListener to raise if no keyboards found.
+                    if not self.listener.keyboards:
+                         raise PermissionError("No keyboards detected. Please ensure you are in the 'input' group.")
+                         
+                    return
+                except Exception as e:
+                    print(f"Failed to start EvdevListener: {e}")
+                    raise PermissionError(f"Failed to start Input Listener: {e}\nPlease ensure you are in the 'input' group.")
+            else:
+                 raise ImportError("evdev not found.")
+        
+        print("Starting pynput Listener...")
+        try:
+            self.listener = keyboard.Listener(on_press=self.on_press)
+            self.listener.start()
+        except Exception as e:
+             print(f"Failed to start pynput Listener: {e}")
 
     def stop(self):
         if self.listener:
@@ -71,6 +145,7 @@ class SnippetListener:
                 break
 
     def expand_snippet(self, trigger, content):
+        print(f"DEBUG: Expanding snippet '{trigger}' -> '{content}'")
         # 1. Backspace the trigger
         for _ in range(len(trigger)):
             self.keyboard_controller.tap(Key.backspace)
