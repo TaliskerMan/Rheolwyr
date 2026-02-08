@@ -244,3 +244,12 @@ class RheolwyrWindow(Adw.ApplicationWindow):
             license_type=Gtk.License.GPL_3_0
         )
         about.present()
+
+    def show_error_dialog(self, message):
+        dialog = Adw.MessageDialog(
+            transient_for=self,
+            heading="Error",
+            body=message
+        )
+        dialog.add_response("ok", "OK")
+        dialog.present()

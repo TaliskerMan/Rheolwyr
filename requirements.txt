@@ -1,3 +1,5 @@
 PyGObject
 pynput
 pyclip
+
+evdev
