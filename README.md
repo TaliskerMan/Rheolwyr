@@ -19,8 +19,10 @@ Rheolwyr ("Manager" in Welsh) is a Linux-native text snippet manager designed fo
 
 ### Main Interface
 *(Place `main_interface.png` in `docs/images/` and uncomment the line below)*
-<!-- ![Main Interface](docs/images/main_interface.png) -->
-
+![Main Interface](docs/images/main_interface.png) 
+![Main Interface Dark](docs/images/main_interface_dark.png)
+![About](docs/images/about.png)
+![License](docs/images/license.png)
 
 ## Installation
 
