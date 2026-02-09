@@ -1,10 +1,11 @@
-rheolwyr (0.4.1-1) UNRELEASED; urgency=medium
+rheolwyr (0.4.2-1) unstable; urgency=medium
 
   * Release 0.4.0: Fix Wayland text expansion and add Debian packaging
   * Release 0.4.1: Update application icon to material style and improve
     packaging
+  * Release 0.4.2: Auto-incremented release with updated icon
 
- -- Free Code <freecode@taboo.lan>  Sun, 08 Feb 2026 09:14:40 -0600
+ -- Free Code <freecode@taboo.lan>  Sun, 08 Feb 2026 21:18:01 -0600
 
 rheolwyr (0.3.6) unstable; urgency=medium
 

@@ -1,0 +1,35 @@
+Format: 1.8
+Date: Sun, 08 Feb 2026 21:18:01 -0600
+Source: rheolwyr
+Binary: rheolwyr
+Built-For-Profiles: noudeb
+Architecture: source all
+Version: 0.4.2-1
+Distribution: unstable
+Urgency: medium
+Maintainer: Chuck Talk <cwtalk1@gmail.com>
+Changed-By: Free Code <freecode@taboo.lan>
+Description:
+ rheolwyr   - Linux snippet manager
+Changes:
+ rheolwyr (0.4.2-1) unstable; urgency=medium
+ .
+   * Release 0.4.0: Fix Wayland text expansion and add Debian packaging
+   * Release 0.4.1: Update application icon to material style and improve
+     packaging
+   * Release 0.4.2: Auto-incremented release with updated icon
+Checksums-Sha1:
+ 9d74c74f0cf27fc0fd3335d9dbe7d5bf62a12be1 625 rheolwyr_0.4.2-1.dsc
+ 15fb15334a30b8359a049e3a9cff93be1e321a4c 555104 rheolwyr_0.4.2-1.tar.xz
+ 7524430d296250305326026dc2e14abf72060c1c 182170 rheolwyr_0.4.2-1_all.deb
+ c3a86a0612e4a90ad922c17d6af5432ab51ceabd 20208 rheolwyr_0.4.2-1_amd64.buildinfo
+Checksums-Sha256:
+ 218e21c1d85a1d489c7035f630973bc79439ae5c7be24c513cf8c38fd1845bdb 625 rheolwyr_0.4.2-1.dsc
+ 2a42f45ac8d95ea9f72daa170820b1856f5d5b3720ed0f6bdc88454b38447318 555104 rheolwyr_0.4.2-1.tar.xz
+ 5e779908df046e85ef34f6f88e49c39323305f28bdebd0f757388de1243deb38 182170 rheolwyr_0.4.2-1_all.deb
+ 2e3a6fefeb819dd52defdee91238d9dd13f8800f3303c24bbc27734acae13640 20208 rheolwyr_0.4.2-1_amd64.buildinfo
+Files:
+ 3806c1e12bc482012d88a16d20773906 625 utils optional rheolwyr_0.4.2-1.dsc
+ 086b74e5afb97128f6dc83e85d3d4087 555104 utils optional rheolwyr_0.4.2-1.tar.xz
+ 317011b26f5beafb0399537b8a697ce2 182170 utils optional rheolwyr_0.4.2-1_all.deb
+ da70364bce2d8248a80739d2621f5347 20208 utils optional rheolwyr_0.4.2-1_amd64.buildinfo

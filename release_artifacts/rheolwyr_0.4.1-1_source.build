@@ -1,0 +1,26 @@
+ dpkg-buildpackage -us -uc -ui -S -sa
+dpkg-buildpackage: info: source package rheolwyr
+dpkg-buildpackage: info: source version 0.4.1-1
+dpkg-buildpackage: info: source distribution UNRELEASED
+dpkg-buildpackage: info: source changed by Free Code <freecode@taboo.lan>
+ dpkg-source --before-build .
+ fakeroot debian/rules clean
+dh clean --with python3 --buildsystem=pybuild
+   dh_auto_clean -O--buildsystem=pybuild
+   dh_autoreconf_clean -O--buildsystem=pybuild
+   dh_clean -O--buildsystem=pybuild
+ dpkg-source -b .
+dpkg-source: warning: native package version may not have a revision
+dpkg-source: info: using source format '3.0 (native)'
+dpkg-source: info: building rheolwyr in rheolwyr_0.4.1-1.tar.xz
+dpkg-source: info: building rheolwyr in rheolwyr_0.4.1-1.dsc
+ dpkg-genbuildinfo --build=source -O../rheolwyr_0.4.1-1_source.buildinfo
+ dpkg-genchanges -sa --build=source -O../rheolwyr_0.4.1-1_source.changes
+dpkg-genchanges: info: including full source code in upload
+ dpkg-source --after-build .
+dpkg-buildpackage: info: source-only upload: Debian-native package
+Now running lintian rheolwyr_0.4.1-1_source.changes ...
+E: rheolwyr changes: bogus-mail-host Changed-By freecode@taboo.lan
+E: rheolwyr source: malformed-debian-changelog-version 0.4.1-1 (for native) [debian/changelog:1]
+W: rheolwyr source: no-debian-copyright-in-source
+Finished running lintian.

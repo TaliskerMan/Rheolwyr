@@ -1,0 +1,28 @@
+Format: 1.8
+Date: Sun, 08 Feb 2026 09:14:40 -0600
+Source: rheolwyr
+Built-For-Profiles: noudeb
+Architecture: source
+Version: 0.4.1-1
+Distribution: UNRELEASED
+Urgency: medium
+Maintainer: Chuck Talk <cwtalk1@gmail.com>
+Changed-By: Free Code <freecode@taboo.lan>
+Changes:
+ rheolwyr (0.4.1-1) UNRELEASED; urgency=medium
+ .
+   * Release 0.4.0: Fix Wayland text expansion and add Debian packaging
+   * Release 0.4.1: Update application icon to material style and improve
+     packaging
+Checksums-Sha1:
+ cbe25b8b1cf4a930e9a488840747cf8a31fe3c01 628 rheolwyr_0.4.1-1.dsc
+ d48b59370e71994815d8d622142cbb82c9a1f954 3780904 rheolwyr_0.4.1-1.tar.xz
+ eb0769d4bc0fc029812a24641f3cbd62fa9bf8d2 19949 rheolwyr_0.4.1-1_source.buildinfo
+Checksums-Sha256:
+ 8a8bc54c9a28f3b85d684f6554a6ffe478ebb2b5675d63678bc2a860010e07da 628 rheolwyr_0.4.1-1.dsc
+ 148e2ceee02316c6829f974d86680ca6d98d3d3e3f2a73b7461a4ba6cfb50c54 3780904 rheolwyr_0.4.1-1.tar.xz
+ 703f2e477dc96e5c4f1e1ba2cb6a0c51fc42e947016c1211cf320c2efbc652db 19949 rheolwyr_0.4.1-1_source.buildinfo
+Files:
+ 58fa2b5f7f0a2ec975183e46c1f4f753 628 utils optional rheolwyr_0.4.1-1.dsc
+ f8a66e02aa045062efc1e48208043550 3780904 utils optional rheolwyr_0.4.1-1.tar.xz
+ e8f7a3a1ea68033bac402054b15125c8 19949 utils optional rheolwyr_0.4.1-1_source.buildinfo

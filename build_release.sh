@@ -44,6 +44,10 @@ fi
 rm -rf release_artifacts
 mkdir -p release_artifacts
 
+# 1.5 Increment Version
+echo -e "\n${GREEN}[1.5/3] Incrementing Version...${NC}"
+python3 scripts/increment_version.py
+
 echo -e "\n${GREEN}[2/3] Building Debian Package...${NC}"
 dpkg-buildpackage -us -uc
 
