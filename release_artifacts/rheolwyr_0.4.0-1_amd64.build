@@ -1,0 +1,135 @@
+ dpkg-buildpackage -us -uc -ui
+dpkg-buildpackage: info: source package rheolwyr
+dpkg-buildpackage: info: source version 0.4.0-1
+dpkg-buildpackage: info: source distribution UNRELEASED
+dpkg-buildpackage: info: source changed by Free Code <freecode@taboo.lan>
+ dpkg-source --before-build .
+dpkg-buildpackage: info: host architecture amd64
+ fakeroot debian/rules clean
+dh clean --with python3 --buildsystem=pybuild
+   dh_auto_clean -O--buildsystem=pybuild
+   dh_autoreconf_clean -O--buildsystem=pybuild
+   dh_clean -O--buildsystem=pybuild
+ dpkg-source -b .
+dpkg-source: warning: native package version may not have a revision
+dpkg-source: info: using source format '3.0 (native)'
+dpkg-source: info: building rheolwyr in rheolwyr_0.4.0-1.tar.xz
+dpkg-source: info: building rheolwyr in rheolwyr_0.4.0-1.dsc
+ debian/rules build
+dh build --with python3 --buildsystem=pybuild
+   dh_update_autotools_config -O--buildsystem=pybuild
+   dh_autoreconf -O--buildsystem=pybuild
+   dh_auto_configure -O--buildsystem=pybuild
+   dh_auto_build -O--buildsystem=pybuild
+I: pybuild plugin_pyproject:129: Building wheel for python3.12 with "build" module
+I: pybuild base:311: python3.12 -m build --skip-dependency-check --no-isolation --wheel --outdir /home/freecode/antigrav/Rheolwyr/.pybuild/cpython3_3.12  
+* Building wheel...
+running bdist_wheel
+running build
+running build_py
+creating build
+creating build/lib
+creating build/lib/rheolwyr
+copying src/rheolwyr/config.py -> build/lib/rheolwyr
+copying src/rheolwyr/__init__.py -> build/lib/rheolwyr
+copying src/rheolwyr/clipboard.py -> build/lib/rheolwyr
+copying src/rheolwyr/uinput_controller.py -> build/lib/rheolwyr
+copying src/rheolwyr/main.py -> build/lib/rheolwyr
+copying src/rheolwyr/database.py -> build/lib/rheolwyr
+copying src/rheolwyr/window.py -> build/lib/rheolwyr
+copying src/rheolwyr/listener.py -> build/lib/rheolwyr
+copying src/rheolwyr/evdev_listener.py -> build/lib/rheolwyr
+running egg_info
+creating src/rheolwyr.egg-info
+writing src/rheolwyr.egg-info/PKG-INFO
+writing dependency_links to src/rheolwyr.egg-info/dependency_links.txt
+writing entry points to src/rheolwyr.egg-info/entry_points.txt
+writing requirements to src/rheolwyr.egg-info/requires.txt
+writing top-level names to src/rheolwyr.egg-info/top_level.txt
+writing manifest file 'src/rheolwyr.egg-info/SOURCES.txt'
+reading manifest file 'src/rheolwyr.egg-info/SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file 'src/rheolwyr.egg-info/SOURCES.txt'
+installing to build/bdist.linux-x86_64/wheel
+running install
+running install_lib
+creating build/bdist.linux-x86_64
+creating build/bdist.linux-x86_64/wheel
+creating build/bdist.linux-x86_64/wheel/rheolwyr
+copying build/lib/rheolwyr/config.py -> build/bdist.linux-x86_64/wheel/rheolwyr
+copying build/lib/rheolwyr/__init__.py -> build/bdist.linux-x86_64/wheel/rheolwyr
+copying build/lib/rheolwyr/clipboard.py -> build/bdist.linux-x86_64/wheel/rheolwyr
+copying build/lib/rheolwyr/uinput_controller.py -> build/bdist.linux-x86_64/wheel/rheolwyr
+copying build/lib/rheolwyr/main.py -> build/bdist.linux-x86_64/wheel/rheolwyr
+copying build/lib/rheolwyr/database.py -> build/bdist.linux-x86_64/wheel/rheolwyr
+copying build/lib/rheolwyr/window.py -> build/bdist.linux-x86_64/wheel/rheolwyr
+copying build/lib/rheolwyr/listener.py -> build/bdist.linux-x86_64/wheel/rheolwyr
+copying build/lib/rheolwyr/evdev_listener.py -> build/bdist.linux-x86_64/wheel/rheolwyr
+running install_egg_info
+Copying src/rheolwyr.egg-info to build/bdist.linux-x86_64/wheel/rheolwyr-0.4.0.egg-info
+running install_scripts
+creating build/bdist.linux-x86_64/wheel/rheolwyr-0.4.0.dist-info/WHEEL
+creating '/home/freecode/antigrav/Rheolwyr/.pybuild/cpython3_3.12/.tmp-u8s6eb_g/rheolwyr-0.4.0-py3-none-any.whl' and adding 'build/bdist.linux-x86_64/wheel' to it
+adding 'rheolwyr/__init__.py'
+adding 'rheolwyr/clipboard.py'
+adding 'rheolwyr/config.py'
+adding 'rheolwyr/database.py'
+adding 'rheolwyr/evdev_listener.py'
+adding 'rheolwyr/listener.py'
+adding 'rheolwyr/main.py'
+adding 'rheolwyr/uinput_controller.py'
+adding 'rheolwyr/window.py'
+adding 'rheolwyr-0.4.0.dist-info/LICENSE'
+adding 'rheolwyr-0.4.0.dist-info/METADATA'
+adding 'rheolwyr-0.4.0.dist-info/WHEEL'
+adding 'rheolwyr-0.4.0.dist-info/entry_points.txt'
+adding 'rheolwyr-0.4.0.dist-info/top_level.txt'
+adding 'rheolwyr-0.4.0.dist-info/RECORD'
+removing build/bdist.linux-x86_64/wheel
+Successfully built rheolwyr-0.4.0-py3-none-any.whl
+I: pybuild plugin_pyproject:144: Unpacking wheel built for python3.12 with "installer" module
+   dh_auto_test -O--buildsystem=pybuild
+I: pybuild base:311: cd /home/freecode/antigrav/Rheolwyr/.pybuild/cpython3_3.12/build; python3.12 -m unittest discover -v 
+
+----------------------------------------------------------------------
+Ran 0 tests in 0.000s
+
+NO TESTS RAN
+   create-stamp debian/debhelper-build-stamp
+ fakeroot debian/rules binary
+dh binary --with python3 --buildsystem=pybuild
+   dh_testroot -O--buildsystem=pybuild
+   dh_prep -O--buildsystem=pybuild
+   dh_auto_install --destdir=debian/rheolwyr/ -O--buildsystem=pybuild
+I: pybuild plugin_pyproject:178: Copying package built for python3.12 to destdir
+   dh_install -O--buildsystem=pybuild
+   dh_installdocs -O--buildsystem=pybuild
+   dh_installchangelogs -O--buildsystem=pybuild
+   dh_python3 -O--buildsystem=pybuild
+   dh_installsystemduser -O--buildsystem=pybuild
+   dh_icons -O--buildsystem=pybuild
+   dh_perl -O--buildsystem=pybuild
+   dh_link -O--buildsystem=pybuild
+   dh_strip_nondeterminism -O--buildsystem=pybuild
+   dh_compress -O--buildsystem=pybuild
+   dh_fixperms -O--buildsystem=pybuild
+   dh_missing -O--buildsystem=pybuild
+   dh_installdeb -O--buildsystem=pybuild
+   dh_gencontrol -O--buildsystem=pybuild
+   dh_md5sums -O--buildsystem=pybuild
+   dh_builddeb -O--buildsystem=pybuild
+dpkg-deb: building package 'rheolwyr' in '../rheolwyr_0.4.0-1_all.deb'.
+ dpkg-genbuildinfo -O../rheolwyr_0.4.0-1_amd64.buildinfo
+ dpkg-genchanges -O../rheolwyr_0.4.0-1_amd64.changes
+dpkg-genchanges: info: including full source code in upload
+ dpkg-source --after-build .
+dpkg-buildpackage: info: full upload; Debian-native package (full source is included)
+Now running lintian rheolwyr_0.4.0-1_amd64.changes ...
+E: rheolwyr changes: bogus-mail-host Changed-By freecode@taboo.lan
+E: rheolwyr: bogus-mail-host-in-debian-changelog freecode@cosmo (for version 0.3.5) [usr/share/doc/rheolwyr/changelog.Debian.gz:14]
+E: rheolwyr: bogus-mail-host-in-debian-changelog freecode@taboo.lan (for version 0.4.0-1) [usr/share/doc/rheolwyr/changelog.Debian.gz:1]
+E: rheolwyr source: malformed-debian-changelog-version 0.4.0-1 (for native) [debian/changelog:1]
+E: rheolwyr: no-copyright-file
+W: rheolwyr source: no-debian-copyright-in-source
+W: rheolwyr: no-manual-page [usr/bin/rheolwyr]
+Finished running lintian.
