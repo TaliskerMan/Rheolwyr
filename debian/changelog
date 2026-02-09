@@ -1,3 +1,15 @@
+rheolwyr (0.4.5-1) unstable; urgency=medium
+
+  * Release 0.4.5: Auto-incremented release with updated icon
+
+ -- Chuck Talk <cwtalk1@gmail.com>  Mon, 09 Feb 2026 13:58:55 -0600
+
+rheolwyr (0.4.4-1) unstable; urgency=medium
+
+  * Release 0.4.4: Auto-incremented release with updated icon
+
+ -- Chuck Talk <cwtalk1@gmail.com>  Mon, 09 Feb 2026 13:17:30 -0600
+
 rheolwyr (0.4.3-1) unstable; urgency=medium
 
   * Fix missing icons by adding hicolor-icon-theme dependency
