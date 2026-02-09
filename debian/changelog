@@ -1,3 +1,9 @@
+rheolwyr (0.4.3-1) unstable; urgency=medium
+
+  * Fix missing icons by adding hicolor-icon-theme dependency
+
+ -- Chuck Talk <cwtalk1@gmail.com>  Mon, 09 Feb 2026 12:11:29 -0600
+
 rheolwyr (0.4.2-1) unstable; urgency=medium
 
   * Release 0.4.0: Fix Wayland text expansion and add Debian packaging
