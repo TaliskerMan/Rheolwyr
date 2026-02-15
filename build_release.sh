@@ -41,8 +41,8 @@ fi
 
 # 2. Build Debian Package
 # Clean previous artifacts
-rm -rf release_artifacts
-mkdir -p release_artifacts
+rm -rf artifacts
+mkdir -p artifacts
 
 # 1.5 Increment Version
 echo -e "\n${GREEN}[1.5/3] Incrementing Version...${NC}"
@@ -51,9 +51,9 @@ python3 scripts/increment_version.py
 echo -e "\n${GREEN}[2/3] Building Debian Package...${NC}"
 dpkg-buildpackage -us -uc
 
-# Move artifacts to release_artifacts
-mv ../rheolwyr_* release_artifacts/ 2>/dev/null || true
-echo "Debian package built and moved to release_artifacts/"
+# Move artifacts to artifacts
+mv ../rheolwyr_* artifacts/ 2>/dev/null || true
+echo "Debian package built and moved to artifacts/"
 
 # 3. Build Flatpak
 echo -e "\n${GREEN}[3/3] Building Flatpak...${NC}"
@@ -69,6 +69,6 @@ flatpak-builder --user --force-clean --repo=$REPO_DIR $BUILD_DIR com.taliskerman
 echo "Flatpak built successfully."
 
 # Bundle
-flatpak build-bundle $REPO_DIR release_artifacts/rheolwyr.flatpak com.taliskerman.rheolwyr
+flatpak build-bundle $REPO_DIR artifacts/rheolwyr.flatpak com.taliskerman.rheolwyr
 echo -e "${GREEN}SUCCESS!${NC}"
-echo " - Artifacts are in: release_artifacts/"
+echo " - Artifacts are in: artifacts/"
