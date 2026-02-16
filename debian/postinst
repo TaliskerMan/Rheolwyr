@@ -15,6 +15,10 @@ if [ "$1" = "configure" ]; then
         udevadm trigger || true
     fi
     
+    if command -v gtk-update-icon-cache >/dev/null; then
+        gtk-update-icon-cache -f -t /usr/share/icons/hicolor || true
+    fi
+    
     echo "----------------------------------------------------------------"
     echo "Rheolwyr installed."
     echo "IMPORTANT: To use text expansion on Wayland, you must satisfy"
