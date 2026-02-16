@@ -9,6 +9,10 @@ NC='\033[0m' # No Color
 echo -e "${GREEN}Rheolwyr Build Helper${NC}"
 echo "---------------------"
 
+# Set Maintainer Identity for GPG Signing and Changelog
+export DEBFULLNAME="Chuck Talk"
+export DEBEMAIL="cwtalk1@gmail.com"
+
 # Function to check if a command exists
 command_exists() {
     command -v "$1" >/dev/null 2>&1
@@ -48,8 +52,9 @@ mkdir -p artifacts
 echo -e "\n${GREEN}[1.5/3] Incrementing Version...${NC}"
 python3 scripts/increment_version.py
 
-echo -e "\n${GREEN}[2/3] Building Debian Package...${NC}"
-dpkg-buildpackage -us -uc
+echo -e "\n${GREEN}[2/3] Building Debian Package (Signed)...${NC}"
+# Removed -us -uc to allow signing, force sign with key
+dpkg-buildpackage --sign-key="cwtalk1@gmail.com"
 
 # Move artifacts to artifacts
 mv ../rheolwyr_* artifacts/ 2>/dev/null || true
@@ -70,5 +75,14 @@ echo "Flatpak built successfully."
 
 # Bundle
 flatpak build-bundle $REPO_DIR artifacts/rheolwyr.flatpak com.taliskerman.rheolwyr
+
+# 4. Generate Hashes
+echo -e "\n${GREEN}[4/4] Generating Checksums...${NC}"
+cd artifacts
+sha512sum * > SHA512SUMS
+cd ..
+
 echo -e "${GREEN}SUCCESS!${NC}"
-echo " - Artifacts are in: artifacts/"
+ARTIFACT_PATH=$(realpath artifacts)
+echo " - Artifacts are in: $ARTIFACT_PATH"
+echo " - Checksum file: $ARTIFACT_PATH/SHA512SUMS"

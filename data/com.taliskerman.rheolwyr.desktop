@@ -8,3 +8,4 @@ Type=Application
 Categories=Utility;TextTools;GTK;
 Keywords=text;expander;snippet;
 StartupNotify=true
+StartupWMClass=com.taliskerman.rheolwyr

@@ -56,10 +56,10 @@ Rheolwyr ("Manager" in Welsh) is a Linux-native text snippet manager designed fo
 
 ### Debian / Ubuntu
 
-Build using `dpkg-buildpackage`:
+Build using `dpkg-buildpackage` (signing enabled by default):
 
 ```bash
-dpkg-buildpackage -us -uc
+dpkg-buildpackage
 ```
 
 ### Flatpak

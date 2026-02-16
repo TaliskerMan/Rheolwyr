@@ -1,0 +1,43 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Format: 1.8
+Date: Mon, 09 Feb 2026 13:58:55 -0600
+Source: rheolwyr
+Binary: rheolwyr
+Built-For-Profiles: noudeb
+Architecture: source all
+Version: 0.4.5-1
+Distribution: unstable
+Urgency: medium
+Maintainer: Chuck Talk <cwtalk1@gmail.com>
+Changed-By: Chuck Talk <cwtalk1@gmail.com>
+Description:
+ rheolwyr   - Linux snippet manager
+Changes:
+ rheolwyr (0.4.5-1) unstable; urgency=medium
+ .
+   * Release 0.4.5: Auto-incremented release with updated icon
+Checksums-Sha1:
+ 83406d35f6e1f602876d116febe13e5eac87f239 930 rheolwyr_0.4.5-1.dsc
+ c1fc6d98067ee6622ed12fc6524f2ae70d30d947 6934740 rheolwyr_0.4.5-1.tar.xz
+ b0705e6b3d834199dcd1b455fb94b8cc588e8b72 251722 rheolwyr_0.4.5-1_all.deb
+ 5ff8efa2e3b58b8aae4c5c0067cebcf7082219b8 20822 rheolwyr_0.4.5-1_amd64.buildinfo
+Checksums-Sha256:
+ 3f66b900662525cf57b7968dc7b16405485cae47180b03c6e6b1e7e18f6b4e58 930 rheolwyr_0.4.5-1.dsc
+ 6dc3e9838de2807c1a546ccb01f19ff7eadd6bf0000ce03d4b807d17c8e428de 6934740 rheolwyr_0.4.5-1.tar.xz
+ 89f6fc6eb3c6b4c72a1eae5f75bf6353e85d52924cbfcda132b224017b565189 251722 rheolwyr_0.4.5-1_all.deb
+ 41bd9a1d465fedebf795f80e8cba5dbd84cf06a52e1eaf004dd7c1a110327054 20822 rheolwyr_0.4.5-1_amd64.buildinfo
+Files:
+ 91a6f14f187161b83d73cd37da09216d 930 utils optional rheolwyr_0.4.5-1.dsc
+ 203641419eb2c69a29c015d30c050fd8 6934740 utils optional rheolwyr_0.4.5-1.tar.xz
+ c281e5a661b93a352e0b10bac3600c91 251722 utils optional rheolwyr_0.4.5-1_all.deb
+ ea3498b6b0a743cb38b4fc62aa43ca9d 20822 utils optional rheolwyr_0.4.5-1_amd64.buildinfo
+
+-----BEGIN PGP SIGNATURE-----
+
+iIgEARYKADAWIQRurtxXjsh/94S0iLHhabBBy7SSpAUCaYo8kxIcY3d0YWxrMUBn
+bWFpbC5jb20ACgkQ4WmwQcu0kqR5yQD9EsqONhTNSewUxNS2ekSuV2URqYKeRPn8
+dqk/SMz+tIQBAMYCc1PTiibpUGvk84jPrcswI+Zk7gBYyCraoh6imtgC
+=T/tw
+-----END PGP SIGNATURE-----

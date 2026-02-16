@@ -11,12 +11,14 @@ mkdir -p ~/.local/share/applications
 cp data/com.taliskerman.rheolwyr.desktop ~/.local/share/applications/
 
 # Install Icon
-mkdir -p ~/.local/share/icons/hicolor/512x512/apps
-cp data/icons/hicolor/512x512/apps/com.taliskerman.rheolwyr.png ~/.local/share/icons/hicolor/512x512/apps/
+# Install Icon
+mkdir -p ~/.local/share/icons/hicolor
+cp -r data/icons/hicolor/* ~/.local/share/icons/hicolor/
 
 # Update icon cache
 echo "Updating icon cache..."
 gtk-update-icon-cache ~/.local/share/icons/hicolor || true
+update-desktop-database ~/.local/share/applications || true
 
 echo "Installation complete!"
 echo "If the icon still doesn't appear:"

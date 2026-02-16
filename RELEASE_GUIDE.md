@@ -17,9 +17,20 @@ Follow these steps to build and release a new version of Rheolwyr.
    ```bash
    ./build_release.sh
    ```
-   This will create a `release_artifacts/` directory containing:
-   - `rheolwyr_X.Y.Z_all.deb`
-   - `rheolwyr.flatpak` (if Flatpak build succeeds)
+   This will:
+   - Auto-increment the version.
+   - Build and **sign** the Debian package (requires GPG key for `Chuck Talk <cwtalk1@gmail.com>`).
+   - Build the Flatpak bundle.
+   - Generate `SHA512SUMS` in `release_artifacts/`.
+
+## Verification
+
+To verify the integrity of the built artifacts:
+
+```bash
+cd release_artifacts
+sha512sum -c SHA512SUMS
+```
 
 ## Testing
 
@@ -44,4 +55,4 @@ Follow these steps to build and release a new version of Rheolwyr.
 2. **Create Release**:
    - Go to GitHub -> Releases -> Draft a new release.
    - Tag: `vX.Y.Z`
-   - Upload the `.deb` file from `release_artifacts/`.
+   - Upload the artifacts from `release_artifacts/` (deb, flatpak, SHA512SUMS).
