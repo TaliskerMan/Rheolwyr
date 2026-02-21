@@ -3,6 +3,7 @@
 # Licensed under GPLv3 or later
 
 import importlib.metadata
+import json
 import gi
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
@@ -46,6 +47,13 @@ class RheolwyrWindow(Adw.ApplicationWindow):
         # Gio.Menu doesn't have a simple separator method in minimal usage, usually handled by sections.
         # We'll just create a section for About to separate it visually if possible, or just append.
         
+
+        section_main = Gio.Menu()
+        section_main.append("Import Snippets", "win.import-snippets")
+        section_main.append("Export Snippets", "win.export-snippets")
+        section_main.append("Instructions", "win.instructions")
+        theme_menu.append_section(None, section_main)
+        
         section = Gio.Menu()
         section.append("About Rheolwyr", "win.about")
         theme_menu.append_section(None, section)
@@ -66,6 +74,19 @@ class RheolwyrWindow(Adw.ApplicationWindow):
         action_dark = Gio.SimpleAction.new("theme-dark", None)
         action_dark.connect("activate", lambda a, p: self.set_theme(Adw.ColorScheme.FORCE_DARK))
         self.add_action(action_dark)
+        
+
+        action_import = Gio.SimpleAction.new("import-snippets", None)
+        action_import.connect("activate", self.on_import_action)
+        self.add_action(action_import)
+        
+        action_export = Gio.SimpleAction.new("export-snippets", None)
+        action_export.connect("activate", self.on_export_action)
+        self.add_action(action_export)
+
+        action_instructions = Gio.SimpleAction.new("instructions", None)
+        action_instructions.connect("activate", self.on_instructions_action)
+        self.add_action(action_instructions)
         
         action_about = Gio.SimpleAction.new("about", None)
         action_about.connect("activate", self.on_about_action)
@@ -245,11 +266,90 @@ class RheolwyrWindow(Adw.ApplicationWindow):
         )
         about.present()
 
-    def show_error_dialog(self, message):
+    def show_message_dialog(self, heading, message):
         dialog = Adw.MessageDialog(
             transient_for=self,
-            heading="Error",
+            heading=heading,
             body=message
         )
         dialog.add_response("ok", "OK")
         dialog.present()
+
+    def on_instructions_action(self, action, param):
+        instructions_text = """
+<b>Welcome to Rheolwyr!</b>
+
+Rheolwyr is a Linux text expansion tool that runs in the background.
+
+<b>How to Use:</b>
+1. Create a "Snippet" by clicking the '+' button.
+2. Enter a Name for your snippet.
+3. Enter a <b>Trigger Text</b>. This is the sequence of characters you type to trigger the expansion (e.g., ;email).
+4. Enter the <b>Snippet Content</b>. This is the text that will replace your trigger.
+5. Click Save.
+
+Once saved, whenever you type the Trigger Text in any text field across your system, it will be automatically replaced with the Snippet Content!
+
+<b>Import/Export:</b>
+Use the menu to export your snippets to a JSON file for backup, or import snippets from a previously saved JSON file.
+"""
+        dialog = Adw.MessageDialog(
+            transient_for=self,
+            heading="Rheolwyr Instructions",
+            body=instructions_text
+        )
+        dialog.set_body_use_markup(True)
+        dialog.add_response("ok", "Got it!")
+        dialog.present()
+
+    def on_import_action(self, action, param):
+        dialog = Gtk.FileDialog()
+        dialog.set_title("Import Snippets")
+        
+        filters = Gio.ListStore.new(Gtk.FileFilter)
+        filter_json = Gtk.FileFilter()
+        filter_json.set_name("JSON Files")
+        filter_json.add_mime_type("application/json")
+        filter_json.add_pattern("*.json")
+        filters.append(filter_json)
+        dialog.set_filters(filters)
+        
+        dialog.open(self, None, self.on_import_dialog_open_cb)
+
+    def on_import_dialog_open_cb(self, dialog, result):
+        try:
+            file = dialog.open_finish(result)
+            if file:
+                path = file.get_path()
+                count = self.db.import_snippets(path)
+                if count > 0:
+                    self.load_snippets()
+                    self.show_message_dialog("Success", f"Successfully imported {count} snippets.")
+                elif count == 0:
+                    self.show_message_dialog("Information", "Import completed. No new snippets were added (all were duplicates).")
+                else:
+                    self.show_message_dialog("Error", "Failed to import snippets. Check file format.")
+        except gi.repository.GLib.GError as e:
+            pass # User cancelled or similar
+
+    def on_export_action(self, action, param):
+        dialog = Gtk.FileDialog()
+        dialog.set_title("Export Snippets")
+        dialog.set_initial_name("rheolwyr_snippets.json")
+        
+        dialog.save(self, None, self.on_export_dialog_save_cb)
+
+    def on_export_dialog_save_cb(self, dialog, result):
+        try:
+            file = dialog.save_finish(result)
+            if file:
+                path = file.get_path()
+                if not path.endswith('.json'):
+                    path += '.json'
+                success = self.db.export_snippets(path)
+                if success:
+                    self.show_message_dialog("Success", "Snippets exported successfully.")
+                else:
+                    self.show_message_dialog("Error", "Failed to export snippets.")
+        except gi.repository.GLib.GError as e:
+            pass # User cancelled

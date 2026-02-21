@@ -1,7 +1,7 @@
 # <img src="docs/images/icon.png" width="48" height="48" align="center" alt="Rheolwyr Icon"> Rheolwyr
 
 Linux text expander.
-Version 0.4.1
+Version 0.4.10
 Rheolwyr ("Manager" in Welsh) is a Linux-native text snippet manager designed for Pop!_OS Cosmic and GNOME on Wayland.
 
 ## Features
@@ -15,16 +15,23 @@ Rheolwyr ("Manager" in Welsh) is a Linux-native text snippet manager designed fo
 
 ## Screenshots
 
-> **Note**: To add screenshots, place your image files in `docs/images/` and reference them here.
-
 ### Main Interface
-*(Place `main_interface.png` in `docs/images/` and uncomment the line below)*
 ![Main Interface](docs/images/main_interface.png) 
 ![Main Interface Dark](docs/images/main_interface_dark.png)
 ![About](docs/images/about.png)
 ![License](docs/images/license.png)
 
 ## Installation
+
+The recommended way to install Rheolwyr is via the native `.deb` package provided in the GitHub Releases. This ensures the application is installed globally and has the necessary permissions to expand text in the background.
+
+1. Download the latest `rheolwyr_*_all.deb` package from the [Releases page](https://github.com/TaliskerMan/Rheolwyr/releases).
+2. Install the package using `apt` (this will automatically install required dependencies):
+   ```bash
+   sudo apt install ./rheolwyr_*_all.deb
+   ```
+
+### Building from Source (Development)
 
 1. Install system dependencies:
 
@@ -38,12 +45,10 @@ Rheolwyr ("Manager" in Welsh) is a Linux-native text snippet manager designed fo
    pip install -r requirements.txt
    ```
 
-2. Run the application:
+3. Run the application:
 
    ```bash
    python -m rheolwyr.main
-   # Or after pip install .
-   rheolwyr
    ```
 
 ## Tech Stack
