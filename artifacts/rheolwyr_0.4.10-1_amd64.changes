@@ -1,0 +1,32 @@
+Format: 1.8
+Date: Sat, 21 Feb 2026 15:55:37 -0600
+Source: rheolwyr
+Binary: rheolwyr
+Built-For-Profiles: noudeb
+Architecture: source all
+Version: 0.4.10-1
+Distribution: unstable
+Urgency: medium
+Maintainer: Chuck Talk <cwtalk1@gmail.com>
+Changed-By: Chuck Talk <cwtalk1@gmail.com>
+Description:
+ rheolwyr   - Linux snippet manager
+Changes:
+ rheolwyr (0.4.10-1) unstable; urgency=medium
+ .
+   * Release 0.4.10: Auto-incremented release with updated icon
+Checksums-Sha1:
+ a6f42d444d68b665638520c4b1a798981ef25e00 632 rheolwyr_0.4.10-1.dsc
+ 87e8c8d171591dd9c9ddff6434e8c3ffcae3854b 1383016 rheolwyr_0.4.10-1.tar.xz
+ f54a16ed4d0f154708356383eda1e7c4e879252d 160424 rheolwyr_0.4.10-1_all.deb
+ a4cf819e1d038ac50a310367b9f8395c66fdd224 20269 rheolwyr_0.4.10-1_amd64.buildinfo
+Checksums-Sha256:
+ 7730957429ae3cb90899b735e66249143355ec028e2c66981d5da83b8f388cf6 632 rheolwyr_0.4.10-1.dsc
+ ed2424d285557b7e895571b3eff8b9c74a6bf37143067a90f2d2f582851f61e6 1383016 rheolwyr_0.4.10-1.tar.xz
+ b11716c8687147b7335e8f1450d62c6d2f8547c10c68599f8bdccb39648aecb6 160424 rheolwyr_0.4.10-1_all.deb
+ 98c0e499c59c1e446acd03eef9b4e602d5aaa2e7c5379d96f0fc2f230e2803d9 20269 rheolwyr_0.4.10-1_amd64.buildinfo
+Files:
+ cc4e3d25f3d71cee6ec806c0fd95b348 632 utils optional rheolwyr_0.4.10-1.dsc
+ 31285b3ee2bc6e4ee310848f22f74d19 1383016 utils optional rheolwyr_0.4.10-1.tar.xz
+ 0690b8a56cb98ab294dc6141f7169fff 160424 utils optional rheolwyr_0.4.10-1_all.deb
+ ef0864f9a02a1196167c1fcb2b87489c 20269 utils optional rheolwyr_0.4.10-1_amd64.buildinfo
