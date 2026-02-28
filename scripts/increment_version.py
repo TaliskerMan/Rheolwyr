@@ -28,7 +28,7 @@ def update_pyproject(new_version):
 
 def update_changelog(new_version):
     # Use dch to add a new entry
-    subprocess.run(["dch", "-v", f"{new_version}-1", "--distribution", "unstable", f"Release {new_version}: Auto-incremented release with updated icon"], check=True)
+    subprocess.run(["dch", "-v", f"{new_version}-1", "--distribution", "unstable", f"Release {new_version}: Fixed dropped character on Wayland by waiting for physical key release"], check=True)
     subprocess.run(["dch", "--release", ""], check=True)
     print(f"Updated debian/changelog to version {new_version}-1")
 
