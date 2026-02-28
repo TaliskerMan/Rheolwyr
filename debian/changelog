@@ -1,3 +1,10 @@
+rheolwyr (0.4.11-1) unstable; urgency=medium
+
+  * Release 0.4.11: Fixed dropped character on Wayland by waiting for
+    physical key release
+
+ -- Chuck Talk <cwtalk1@gmail.com>  Sat, 28 Feb 2026 09:28:54 -0600
+
 rheolwyr (0.4.10-1) unstable; urgency=medium
 
   * Release 0.4.10: Auto-incremented release with updated icon
