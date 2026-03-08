@@ -146,6 +146,15 @@ class SnippetListener:
 
     def expand_snippet(self, trigger, content):
         print(f"DEBUG: Expanding snippet '{trigger}' -> '{content}'")
+        
+        # Wait for physical keys to be released to avoid Wayland dropping injected keys
+        if hasattr(self.listener, 'pressed_keys'):
+            # Allow up to 500ms for keys to be released
+            for _ in range(50):
+                if not self.listener.pressed_keys:
+                    break
+                time.sleep(0.01)
+                
         # 1. Backspace the trigger
         # We need to be careful not to delete too fast or too slow.
         for _ in range(len(trigger)):

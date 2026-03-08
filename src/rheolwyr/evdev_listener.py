@@ -19,6 +19,8 @@ class EvdevListener:
         self.thread = None
         self._stop_event = threading.Event()
         
+        self.pressed_keys = set()
+        
         # Modifier state
         self.modifiers = {
             'shift': False,
@@ -93,6 +95,11 @@ class EvdevListener:
         key_code = event.code
         val = event.value
         
+        if val == 1:
+            self.pressed_keys.add(key_code)
+        elif val == 0:
+            self.pressed_keys.discard(key_code)
+            
         # Update modifiers
         if key_code in [evdev.ecodes.KEY_LEFTSHIFT, evdev.ecodes.KEY_RIGHTSHIFT]:
             self.modifiers['shift'] = (val > 0)
