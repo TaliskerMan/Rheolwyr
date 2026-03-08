@@ -61,20 +61,7 @@ mv ../rheolwyr_* artifacts/ 2>/dev/null || true
 echo "Debian package built and moved to artifacts/"
 
 # 3. Build Flatpak
-echo -e "\n${GREEN}[3/3] Building Flatpak...${NC}"
-REPO_DIR="repo"
-BUILD_DIR="build-dir"
-
-# Install Runtime if missing
-# echo "Ensuring GNOME Runtime 46 is installed..."
-# flatpak install -y --user org.gnome.Platform/x86_64/46 org.gnome.Sdk/x86_64/46 || true
-
-# Build
-flatpak-builder --user --force-clean --repo=$REPO_DIR $BUILD_DIR com.taliskerman.rheolwyr.yml
-echo "Flatpak built successfully."
-
-# Bundle
-flatpak build-bundle $REPO_DIR artifacts/rheolwyr.flatpak com.taliskerman.rheolwyr
+echo -e "\n${GREEN}[3/3] Skipping Flatpak Build...${NC}"
 
 # 4. Generate Hashes
 echo -e "\n${GREEN}[4/4] Generating Checksums...${NC}"
