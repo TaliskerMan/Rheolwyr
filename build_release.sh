@@ -11,7 +11,7 @@ echo "---------------------"
 
 # Set Maintainer Identity for GPG Signing and Changelog
 export DEBFULLNAME="Chuck Talk"
-export DEBEMAIL="cwtalk1@gmail.com"
+export DEBEMAIL="chuck@nordheim.online"
 
 # Function to check if a command exists
 command_exists() {
@@ -54,7 +54,7 @@ python3 scripts/increment_version.py
 
 echo -e "\n${GREEN}[2/3] Building Debian Package (Signed)...${NC}"
 # Removed -us -uc to allow signing, force sign with key
-dpkg-buildpackage --sign-key="cwtalk1@gmail.com"
+dpkg-buildpackage --sign-key="chuck@nordheim.online"
 
 # Move artifacts to artifacts
 mv ../rheolwyr_* artifacts/ 2>/dev/null || true

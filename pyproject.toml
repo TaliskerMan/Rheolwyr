@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rheolwyr"
-version = "0.4.11"
+version = "0.4.12"
 description = "Linux-native text expander for GNOME and Cosmic"
 readme = "README.md"
 authors = [
-  { name="Chuck Talk", email="cwtalk1@gmail.com" },
+  { name="Chuck Talk", email="chuck@nordheim.online" },
 ]
 license = { file = "LICENSE" }
 classifiers = [
