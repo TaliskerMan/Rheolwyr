@@ -46,6 +46,8 @@ class RheolwyrApp(Adw.Application):
 
 
 def main():
+    GLib.set_prgname('com.taliskerman.rheolwyr')
+    GLib.set_application_name('Rheolwyr')
     app = RheolwyrApp()
     # Handle Ctrl+C
     GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, signal.SIGINT, app.quit)
