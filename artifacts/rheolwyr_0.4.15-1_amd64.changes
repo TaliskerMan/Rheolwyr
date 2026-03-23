@@ -1,0 +1,54 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Format: 1.8
+Date: Mon, 23 Mar 2026 12:29:29 -0500
+Source: rheolwyr
+Binary: rheolwyr
+Built-For-Profiles: noudeb
+Architecture: source all
+Version: 0.4.15-1
+Distribution: unstable
+Urgency: medium
+Maintainer: Chuck Talk <chuck@nordheim.online>
+Changed-By: Chuck Talk <chuck@nordheim.online>
+Description:
+ rheolwyr   - Linux snippet manager
+Changes:
+ rheolwyr (0.4.15-1) unstable; urgency=medium
+ .
+   * Release 0.4.15: Fixed dropped character on Wayland by waiting for
+     physical key release
+Checksums-Sha1:
+ ae3e58e0475db235b53413b41c1a342e00cd039b 1552 rheolwyr_0.4.15-1.dsc
+ f5ed63c66334e05ac5e43826aa30fcfc06986952 6493580 rheolwyr_0.4.15-1.tar.xz
+ 575ecd2191d03f07f6988b7e5de0bc83da76d1fc 171124 rheolwyr_0.4.15-1_all.deb
+ a9925cbd53eb4fb48ab1863b11a1ac2b336544e3 21859 rheolwyr_0.4.15-1_amd64.buildinfo
+Checksums-Sha256:
+ 5a8aeef4ae12b17a8c71e116827b42dbe3b9c02facb9883380c07c7e6cb6b649 1552 rheolwyr_0.4.15-1.dsc
+ 0d37a313f205c68f921994d96735058153b9c5377e856c1a0fc9dbe049ff63b1 6493580 rheolwyr_0.4.15-1.tar.xz
+ 9930e9b50cfb7bf060ed8a3904a660be73642886bd219a972f68ef78c45f5244 171124 rheolwyr_0.4.15-1_all.deb
+ 4ea87c865fb816f68a66642cdda7023114f93979ce4eba78ee9e8c86dcecd842 21859 rheolwyr_0.4.15-1_amd64.buildinfo
+Files:
+ e4f702bb09cc23bec84b88e0218c4ff9 1552 utils optional rheolwyr_0.4.15-1.dsc
+ 8e5d95757bb55d2a4e9713fac20c7348 6493580 utils optional rheolwyr_0.4.15-1.tar.xz
+ 87c43ce2edeedfb8942fb9d843def261 171124 utils optional rheolwyr_0.4.15-1_all.deb
+ 916fab48b70402bd74ac27b715563d53 21859 utils optional rheolwyr_0.4.15-1_amd64.buildinfo
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJKBAEBCgA0FiEEF3nND1DbtkwYeQgmSGPHNRfYEPgFAmnBeIEWHGNodWNrQG5v
+cmRoZWltLm9ubGluZQAKCRBIY8c1F9gQ+JbQD/9re6HyeV0cgiq45y9W1iAFr/Hl
+MHivj4Lec8vOLYu18TdLfMKUNb+MpRIeLg6K07FBwaGdeN9h4kNu9E5GnBoxhv4/
+Qq7ZTYuKQ0cIi3sR9xc/K+E1i4n8Oeey5dkPnvAUJ7kUjJcCAMpSuA4JzDXIStPD
+v0ZpTpsCvdq9wPydq/6Rd0Iqwr4O3brD2MyfnB0yrE9XzW8E7gR3oa/8fZdMaAt1
+UbsHmA0aMSoamEMiupJxT2DSFEHy5aTTk7p8EEvqiAk8sfOC7o6uqlYCiqGKS74I
+Pdej+XYKavCEOx2RaqZiE1pCciSXmY4u13YAoKgMQfC31GVhueRcO+Nk5s9MkByh
+vNy/A9Aj5eFc/RpD8SOE5JSvfGxf2LZUB+nIDq/vEPI7aaDxqGlv2R33JukZaxNA
+B9OFwJrUb7jf19HdfBUSyr5tlHGdOpi9DL8+auzvbemLDH6Xk4ym7PLoFbKOc9IL
+pCZSEr+MZOaCF8ffrlewxkX5Sd1q25ZUQoNueqp+c4TnRTF591dGIbqHWpWw/SAu
+PC/8WYRgq6sZatUQFjK+Qlt2wCNAeTZhS8+KDAzwYU4NVONi01M2PTCk0x7fXZnc
+qy1P80o6i+HjQyqjK+CrA95jkHq+CeRUqF+60HEwdbbVooMbcdNiMcVTnqLVUK/4
+hsi/vFc29WGxC0/ZqA==
+=KmqJ
+-----END PGP SIGNATURE-----

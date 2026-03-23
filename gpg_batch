@@ -1,0 +1,9 @@
+Key-Type: EDDSA
+Key-Curve: ed25519
+Key-Usage: sign
+Subkey-Type: ECDH
+Subkey-Curve: cv25519
+Name-Real: Chuck Talk
+Name-Email: cwtalk1@gmail.com
+Passphrase: @Skull&Du5t3r!
+%commit
