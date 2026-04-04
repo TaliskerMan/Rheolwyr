@@ -67,15 +67,6 @@ Build using `dpkg-buildpackage` (signing enabled by default):
 dpkg-buildpackage
 ```
 
-### Flatpak
-
-Build using `flatpak-builder`:
-
-```bash
-flatpak-builder --user --install build-dir com.taliskerman.rheolwyr.yml
-```
-
-
 ## Setup & Troubleshooting
 
 ### Enabling Text Expansion (Wayland/Input)
