@@ -1,4 +1,4 @@
-# <img src="docs/images/icon.png" width="48" height="48" align="center" alt="Rheolwyr Icon"> Rheolwyr
+# <img src="data/rheolwyr.png" width="48" height="48" align="center" alt="Rheolwyr Icon"> Rheolwyr
 
 Linux text expander.
 Version 0.4.11
