@@ -26,7 +26,6 @@ if ! dpkg -s debhelper >/dev/null 2>&1; then MISSING_DEPS+=("debhelper"); fi
 if ! dpkg -s dh-python >/dev/null 2>&1; then MISSING_DEPS+=("dh-python"); fi
 if ! dpkg -s python3-all >/dev/null 2>&1; then MISSING_DEPS+=("python3-all"); fi
 if ! dpkg -s pybuild-plugin-pyproject >/dev/null 2>&1; then MISSING_DEPS+=("pybuild-plugin-pyproject"); fi
-if ! command_exists flatpak-builder; then MISSING_DEPS+=("flatpak-builder"); fi
 
 if [ ${#MISSING_DEPS[@]} -ne 0 ]; then
     echo -e "${RED}Missing dependencies: ${MISSING_DEPS[*]}${NC}"
@@ -60,11 +59,8 @@ dpkg-buildpackage --sign-key="chuck@nordheim.online"
 mv ../rheolwyr_* artifacts/ 2>/dev/null || true
 echo "Debian package built and moved to artifacts/"
 
-# 3. Build Flatpak
-echo -e "\n${GREEN}[3/3] Skipping Flatpak Build...${NC}"
-
-# 4. Generate Hashes
-echo -e "\n${GREEN}[4/4] Generating Checksums...${NC}"
+# 3. Generate Hashes
+echo -e "\n${GREEN}[3/3] Generating Checksums...${NC}"
 cd artifacts
 sha512sum * > SHA512SUMS
 cd ..

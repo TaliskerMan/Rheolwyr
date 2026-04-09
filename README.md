@@ -87,7 +87,6 @@ For text expansion to work, especially on Wayland, your user needs permission to
 -   **"Snippet not expanding"**:
     -   Verify you are in the groups: run `groups` and look for `input` and `uinput`.
     -   Ensure `rheolwyr` is running (check system tray).
-    -   If on Wayland, ensure you are not using a confined Flatpak without proper permissions (native `.deb` package recommended for best compatibility).
 
 ## License
 
