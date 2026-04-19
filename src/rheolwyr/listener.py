@@ -1,30 +1,30 @@
 import time
 import threading
 import os
-from pynput import keyboard
-from pynput.keyboard import Key, KeyCode, Controller as PynputController
 from . import clipboard
 from .database import Database
+
+try:
+    from pynput import keyboard
+    from pynput.keyboard import Key, KeyCode, Controller as PynputController
+except ImportError:
+    keyboard = None
+    PynputController = None
+    class Key:
+        space = "space"
+        backspace = "backspace"
+        enter = "enter"
+        ctrl = "ctrl"
+    class KeyCode:
+        def __init__(self, char=None):
+            self.char = char
+
 try:
     from .uinput_controller import UInputController
 except ImportError:
     UInputController = None
 
-class SnippetListener:
-    def __init__(self):
-        self.db = Database()
-        self.buffer = ""
-        self.max_buffer_size = 50
-        # Prefer UInputController if available (for Wayland support)
-        if UInputController:
-            try:
-                self.keyboard_controller = UInputController()
-                print("Using UInputController for injection")
-            except Exception as e:
-                print(f"Failed to initialize UInputController: {e}")
-                self.keyboard_controller = PynputController()
-        else:
-            self.keyboard_controller = PynputController()
+
 
 try:
     from .evdev_listener import EvdevListener
