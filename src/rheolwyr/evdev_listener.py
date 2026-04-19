@@ -9,8 +9,34 @@ import sys
 try:
     from pynput.keyboard import Key, KeyCode
 except ImportError:
-    Key = None
-    KeyCode = None
+    class Key:
+        backspace = "backspace"
+        tab = "tab"
+        enter = "enter"
+        esc = "esc"
+        space = "space"
+        delete = "delete"
+        up = "up"
+        down = "down"
+        left = "left"
+        right = "right"
+        home = "home"
+        end = "end"
+        page_up = "page_up"
+        page_down = "page_down"
+        shift = "shift"
+        shift_r = "shift_r"
+        ctrl_l = "ctrl_l"
+        ctrl_r = "ctrl_r"
+        alt_l = "alt_l"
+        alt_r = "alt_r"
+        cmd = "cmd"
+        caps_lock = "caps_lock"
+        f1="f1"; f2="f2"; f3="f3"; f4="f4"; f5="f5"; f6="f6"
+        f7="f7"; f8="f8"; f9="f9"; f10="f10"; f11="f11"; f12="f12"
+    class KeyCode:
+        def __init__(self, char=None):
+            self.char = char
 
 class EvdevListener:
     def __init__(self, on_press=None):

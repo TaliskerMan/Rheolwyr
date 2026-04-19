@@ -80,7 +80,29 @@ class UInputController:
 
     def _get_keycode(self, key):
         """Resolves a key (char or pynput Key) to an evdev keycode and modifier requirement."""
-        from pynput.keyboard import Key
+        try:
+            from pynput.keyboard import Key
+        except ImportError:
+            class Key:
+                space = "space"
+                enter = "enter"
+                backspace = "backspace"
+                tab = "tab"
+                esc = "esc"
+                delete = "delete"
+                up = "up"
+                down = "down"
+                left = "left"
+                right = "right"
+                home = "home"
+                end = "end"
+                page_up = "page_up"
+                page_down = "page_down"
+                shift = "shift"
+                ctrl = "ctrl"
+                alt = "alt"
+                cmd = "cmd"
+                caps_lock = "caps_lock"
         
         if hasattr(key, 'char') and key.char:
              char = key.char
