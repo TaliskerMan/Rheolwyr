@@ -32,3 +32,11 @@ rheolwyr = "rheolwyr.main:main"
 
 [tool.setuptools.package-data]
 rheolwyr = ["*.db"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = []

@@ -1,8 +1,13 @@
-import os
-import sqlite3
-import json
-from typing import List, Optional, Tuple
-from gi.repository import GLib
+# Copyright (C) 2026 Chuck Talk <cwtalk1@gmail.com>
+# This file is part of Rheolwyr.
+#
+# Rheolwyr is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, version 3.
+#
+# Rheolwyr is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY. See the GNU AGPL v3 for details.
+
 
 def apply_patch():
     file_path = "/home/freecode/antigrav/Rheolwyr/src/rheolwyr/database.py"
@@ -56,7 +61,7 @@ def apply_patch():
             print(f"Error importing snippets: {e}")
             return -1
 """
-    
+
     if "def export_snippets" not in content:
         content += patch
         with open(file_path, "w") as f:

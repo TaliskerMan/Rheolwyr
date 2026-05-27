@@ -1,8 +1,18 @@
 #!/usr/bin/env python3
+# Copyright (C) 2026 Chuck Talk <cwtalk1@gmail.com>
+# This file is part of Rheolwyr.
+#
+# Rheolwyr is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, version 3.
+#
+# Rheolwyr is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY. See the GNU AGPL v3 for details.
+
 import re
-import sys
 import subprocess
-from datetime import datetime
+import sys
+
 
 def get_current_version():
     with open("pyproject.toml", "r") as f:
@@ -19,9 +29,9 @@ def increment_patch_version(version):
 def update_pyproject(new_version):
     with open("pyproject.toml", "r") as f:
         content = f.read()
-    
+
     new_content = re.sub(r'version\s*=\s*"\d+\.\d+\.\d+"', f'version = "{new_version}"', content)
-    
+
     with open("pyproject.toml", "w") as f:
         f.write(new_content)
     print(f"Updated pyproject.toml to version {new_version}")
@@ -37,11 +47,11 @@ def main():
     if not current_version:
         print("Could not find current version in pyproject.toml")
         sys.exit(1)
-        
+
     print(f"Current version: {current_version}")
     new_version = increment_patch_version(current_version)
     print(f"New version: {new_version}")
-    
+
     update_pyproject(new_version)
     update_changelog(new_version)
 

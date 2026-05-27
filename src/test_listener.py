@@ -1,14 +1,26 @@
+# Copyright (C) 2026 Chuck Talk <cwtalk1@gmail.com>
+# This file is part of Rheolwyr.
+#
+# Rheolwyr is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, version 3.
+#
+# Rheolwyr is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY. See the GNU AGPL v3 for details.
+
+import os
+import sys
 import unittest
 from unittest.mock import MagicMock, patch
-import sys
-import os
 
 # Add src to path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from rheolwyr.listener import SnippetListener
 # Now we can import real classes for typing/constants if needed, or mock them
 from pynput.keyboard import Key
+
+from rheolwyr.listener import SnippetListener
+
 
 class TestListener(unittest.TestCase):
     def setUp(self):
@@ -16,20 +28,20 @@ class TestListener(unittest.TestCase):
         self.db_patcher = patch('rheolwyr.listener.Database')
         self.mock_db_cls = self.db_patcher.start()
         self.mock_db = self.mock_db_cls.return_value
-        
+
         # Patch clipboard
         self.clipboard_patcher = patch('rheolwyr.listener.clipboard')
         self.mock_clipboard = self.clipboard_patcher.start()
-        
+
         # Patch Controller
         self.controller_patcher = patch('rheolwyr.listener.Controller')
         self.mock_controller_cls = self.controller_patcher.start()
         self.mock_controller = self.mock_controller_cls.return_value
-        
+
         # Patch Listener (the pynput listener) to avoid starting a real thread
         self.keyboard_listener_patcher = patch('rheolwyr.listener.keyboard.Listener')
         self.mock_keyboard_listener = self.keyboard_listener_patcher.start()
-        
+
         self.listener = SnippetListener()
         self.listener.running = True
 
@@ -44,7 +56,7 @@ class TestListener(unittest.TestCase):
         key.char = 'a'
         self.listener.on_press(key)
         self.assertEqual(self.listener.buffer, 'a')
-        
+
         key.char = 'b'
         self.listener.on_press(key)
         self.assertEqual(self.listener.buffer, 'ab')
@@ -56,12 +68,12 @@ class TestListener(unittest.TestCase):
 
     def test_trigger_match(self):
         self.listener.buffer = "test;sig"
-        
+
         # Setup mock db
         self.mock_db.get_all_snippets.return_value = [
             (1, "Signature", "My Name", ";sig")
         ]
-        
+
         # Mock expand_snippet
         with patch.object(self.listener, 'expand_snippet') as mock_expand:
             self.listener.check_match()
@@ -71,15 +83,15 @@ class TestListener(unittest.TestCase):
     def test_expansion_logic(self):
         trigger = ";trig"
         content = "Expansion"
-        
+
         self.listener.expand_snippet(trigger, content)
-        
+
         # Verify backspaces (one tap per char)
         self.assertEqual(self.mock_controller.tap.call_count, len(trigger) + 1) # +1 for 'v'
-        
+
         # Verify clipboard copy
         self.mock_clipboard.copy.assert_called_with(content)
-        
+
         # Verify paste (ctrl+v)
         self.mock_controller.pressed.assert_called_with(Key.ctrl)
         # Verify 'v' was tapped (the last tap)

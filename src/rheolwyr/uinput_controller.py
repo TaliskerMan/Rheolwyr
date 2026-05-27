@@ -1,8 +1,20 @@
+# Copyright (C) 2026 Chuck Talk <cwtalk1@gmail.com>
+# This file is part of Rheolwyr.
+#
+# Rheolwyr is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, version 3.
+#
+# Rheolwyr is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY. See the GNU AGPL v3 for details.
+
 import time
 from contextlib import contextmanager
+
 try:
     import evdev
-    from evdev import UInput, ecodes as e
+    from evdev import UInput
+    from evdev import ecodes as e
 except ImportError:
     evdev = None
 
@@ -15,31 +27,31 @@ class UInputController:
     def __init__(self):
         if evdev is None:
             raise ImportError("evdev library is required for UInputController")
-            
+
         # Define the capabilities of the virtual keyboard
         # We need to support all keys that might be typed or used for shortcuts
         cap = {
             e.EV_KEY: [
-                e.KEY_A, e.KEY_B, e.KEY_C, e.KEY_D, e.KEY_E, e.KEY_F, e.KEY_G, 
-                e.KEY_H, e.KEY_I, e.KEY_J, e.KEY_K, e.KEY_L, e.KEY_M, e.KEY_N, 
-                e.KEY_O, e.KEY_P, e.KEY_Q, e.KEY_R, e.KEY_S, e.KEY_T, e.KEY_U, 
+                e.KEY_A, e.KEY_B, e.KEY_C, e.KEY_D, e.KEY_E, e.KEY_F, e.KEY_G,
+                e.KEY_H, e.KEY_I, e.KEY_J, e.KEY_K, e.KEY_L, e.KEY_M, e.KEY_N,
+                e.KEY_O, e.KEY_P, e.KEY_Q, e.KEY_R, e.KEY_S, e.KEY_T, e.KEY_U,
                 e.KEY_V, e.KEY_W, e.KEY_X, e.KEY_Y, e.KEY_Z,
-                e.KEY_1, e.KEY_2, e.KEY_3, e.KEY_4, e.KEY_5, e.KEY_6, e.KEY_7, 
+                e.KEY_1, e.KEY_2, e.KEY_3, e.KEY_4, e.KEY_5, e.KEY_6, e.KEY_7,
                 e.KEY_8, e.KEY_9, e.KEY_0,
                 e.KEY_ENTER, e.KEY_BACKSPACE, e.KEY_TAB, e.KEY_SPACE,
                 e.KEY_MINUS, e.KEY_EQUAL, e.KEY_LEFTBRACE, e.KEY_RIGHTBRACE,
                 e.KEY_SEMICOLON, e.KEY_APOSTROPHE, e.KEY_GRAVE, e.KEY_BACKSLASH,
                 e.KEY_COMMA, e.KEY_DOT, e.KEY_SLASH, e.KEY_CAPSLOCK,
-                e.KEY_F1, e.KEY_F2, e.KEY_F3, e.KEY_F4, e.KEY_F5, e.KEY_F6, 
+                e.KEY_F1, e.KEY_F2, e.KEY_F3, e.KEY_F4, e.KEY_F5, e.KEY_F6,
                 e.KEY_F7, e.KEY_F8, e.KEY_F9, e.KEY_F10, e.KEY_F11, e.KEY_F12,
-                e.KEY_HOME, e.KEY_END, e.KEY_PAGEUP, e.KEY_PAGEDOWN, 
+                e.KEY_HOME, e.KEY_END, e.KEY_PAGEUP, e.KEY_PAGEDOWN,
                 e.KEY_LEFT, e.KEY_RIGHT, e.KEY_UP, e.KEY_DOWN,
                 e.KEY_LEFTSHIFT, e.KEY_RIGHTSHIFT, e.KEY_LEFTCTRL, e.KEY_RIGHTCTRL,
                 e.KEY_LEFTALT, e.KEY_RIGHTALT, e.KEY_LEFTMETA, e.KEY_RIGHTMETA,
                 e.KEY_ESC, e.KEY_DELETE, e.KEY_INSERT
             ]
         }
-        
+
         try:
             self.ui = UInput(cap, name='Rheolwyr-UInput-Keyboard', version=0x1)
         except PermissionError:
@@ -49,20 +61,20 @@ class UInputController:
 
         # Mapping from pynput keys/chars to evdev ecodes
         self.char_map = {
-            'a': e.KEY_A, 'b': e.KEY_B, 'c': e.KEY_C, 'd': e.KEY_D, 'e': e.KEY_E, 
-            'f': e.KEY_F, 'g': e.KEY_G, 'h': e.KEY_H, 'i': e.KEY_I, 'j': e.KEY_J, 
-            'k': e.KEY_K, 'l': e.KEY_L, 'm': e.KEY_M, 'n': e.KEY_N, 'o': e.KEY_O, 
-            'p': e.KEY_P, 'q': e.KEY_Q, 'r': e.KEY_R, 's': e.KEY_S, 't': e.KEY_T, 
-            'u': e.KEY_U, 'v': e.KEY_V, 'w': e.KEY_W, 'x': e.KEY_X, 'y': e.KEY_Y, 
+            'a': e.KEY_A, 'b': e.KEY_B, 'c': e.KEY_C, 'd': e.KEY_D, 'e': e.KEY_E,
+            'f': e.KEY_F, 'g': e.KEY_G, 'h': e.KEY_H, 'i': e.KEY_I, 'j': e.KEY_J,
+            'k': e.KEY_K, 'l': e.KEY_L, 'm': e.KEY_M, 'n': e.KEY_N, 'o': e.KEY_O,
+            'p': e.KEY_P, 'q': e.KEY_Q, 'r': e.KEY_R, 's': e.KEY_S, 't': e.KEY_T,
+            'u': e.KEY_U, 'v': e.KEY_V, 'w': e.KEY_W, 'x': e.KEY_X, 'y': e.KEY_Y,
             'z': e.KEY_Z,
-            '1': e.KEY_1, '2': e.KEY_2, '3': e.KEY_3, '4': e.KEY_4, '5': e.KEY_5, 
+            '1': e.KEY_1, '2': e.KEY_2, '3': e.KEY_3, '4': e.KEY_4, '5': e.KEY_5,
             '6': e.KEY_6, '7': e.KEY_7, '8': e.KEY_8, '9': e.KEY_9, '0': e.KEY_0,
             '\n': e.KEY_ENTER, '\t': e.KEY_TAB, ' ': e.KEY_SPACE,
             '-': e.KEY_MINUS, '=': e.KEY_EQUAL, '[': e.KEY_LEFTBRACE, ']': e.KEY_RIGHTBRACE,
             ';': e.KEY_SEMICOLON, '\'': e.KEY_APOSTROPHE, '`': e.KEY_GRAVE, '\\': e.KEY_BACKSLASH,
             ',': e.KEY_COMMA, '.': e.KEY_DOT, '/': e.KEY_SLASH
         }
-        
+
         # Upper case mapping (requires shift) - simplistic approach
         self.shift_chars = {
             'A': e.KEY_A, 'B': e.KEY_B, 'C': e.KEY_C, 'D': e.KEY_D, 'E': e.KEY_E,
@@ -103,7 +115,7 @@ class UInputController:
                 alt = "alt"
                 cmd = "cmd"
                 caps_lock = "caps_lock"
-        
+
         if hasattr(key, 'char') and key.char:
              char = key.char
              if char in self.char_map:
@@ -118,7 +130,7 @@ class UInputController:
                      return self.char_map[key], False
                  elif key in self.shift_chars:
                      return self.shift_chars[key], True
-             
+
         # Map common pynput Keys
         key_map = {
             Key.space: e.KEY_SPACE,
@@ -143,10 +155,10 @@ class UInputController:
              # Add other mappings as needed
             'v': e.KEY_V, # Special case for ctrl+v string arg
         }
-        
+
         if key in key_map:
             return key_map[key], False
-            
+
         return None, False
 
     def tap(self, key):
@@ -156,16 +168,16 @@ class UInputController:
             if need_shift:
                 self.ui.write(e.EV_KEY, e.KEY_LEFTSHIFT, 1)
                 self.ui.syn()
-                
+
             self.ui.write(e.EV_KEY, ecode, 1)
             self.ui.syn()
             self.ui.write(e.EV_KEY, ecode, 0)
             self.ui.syn()
-            
+
             if need_shift:
                 self.ui.write(e.EV_KEY, e.KEY_LEFTSHIFT, 0)
                 self.ui.syn()
-                
+
             time.sleep(0.01) # Small delay to let input propagate
 
     @contextmanager

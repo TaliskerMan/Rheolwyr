@@ -1,12 +1,27 @@
-import time
-import threading
+# Copyright (C) 2026 Chuck Talk <cwtalk1@gmail.com>
+# This file is part of Rheolwyr.
+#
+# Rheolwyr is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, version 3.
+#
+# Rheolwyr is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY. See the GNU AGPL v3 for details.
+
+"""
+Listener module for handling keyboard input and snippet expansion.
+"""
+import logging
 import os
+import time
+
 from . import clipboard
 from .database import Database
 
 try:
     from pynput import keyboard
-    from pynput.keyboard import Key, KeyCode, Controller as PynputController
+    from pynput.keyboard import Controller as PynputController
+    from pynput.keyboard import Key, KeyCode
 except ImportError:
     keyboard = None
     PynputController = None
@@ -38,9 +53,9 @@ class SnippetListener:
         self.max_buffer_size = 50
         # Check for Wayland
         self.is_wayland = os.environ.get("XDG_SESSION_TYPE", "").lower() == "wayland" or os.environ.get("WAYLAND_DISPLAY")
-        
+
         self.keyboard_controller = None
-        
+
         # Prefer UInputController if available (for Wayland support)
         if self.is_wayland:
             if UInputController:
@@ -65,7 +80,7 @@ class SnippetListener:
         if self.running:
             return
         self.running = True
-        
+
         # Use EvdevListener if on Wayland and available
         if self.is_wayland:
             if EvdevListener:
@@ -73,21 +88,21 @@ class SnippetListener:
                 try:
                     self.listener = EvdevListener(on_press=self.on_press)
                     self.listener.start()
-                    
+
                     # Verify if listener actually found devices
                     # Wait a bit for thread to start?
                     # logic inside EvdevListener.start checks for keyboards.
                     # We might want EvdevListener to raise if no keyboards found.
                     if not self.listener.keyboards:
                          raise PermissionError("No keyboards detected. Please ensure you are in the 'input' group.")
-                         
+
                     return
                 except Exception as e:
                     print(f"Failed to start EvdevListener: {e}")
                     raise PermissionError(f"Failed to start Input Listener: {e}\nPlease ensure you are in the 'input' group.")
             else:
                  raise ImportError("evdev not found.")
-        
+
         print("Starting pynput Listener...")
         try:
             self.listener = keyboard.Listener(on_press=self.on_press)
@@ -117,7 +132,7 @@ class SnippetListener:
                 # Other special keys might reset buffer or be ignored
                 # For now let's not reset on shift/ctrl etc.
                 pass
-                
+
             # Trim buffer
             if len(self.buffer) > self.max_buffer_size:
                 self.buffer = self.buffer[-self.max_buffer_size:]
@@ -129,12 +144,12 @@ class SnippetListener:
     def check_match(self):
         # We need to check if the *end* of the buffer matches any trigger.
         # This is a bit inefficient (checking all triggers on every keypress).
-        # Optimization: Get all triggers once or cache them? 
+        # Optimization: Get all triggers once or cache them?
         # For now, querying DB is safest for consistency, but maybe slow.
         # Let's optimize by getting all snippets triggers and checking in memory.
         # Since we are in the main thread (mostly), let's just query to be safe technically sqlite is fast enough for small DBs.
         # Use get_all_snippets()
-        
+
         snippets = self.db.get_all_snippets()
         for s in snippets:
             # s: id, name, content, trigger
@@ -146,7 +161,7 @@ class SnippetListener:
 
     def expand_snippet(self, trigger, content):
         print(f"DEBUG: Expanding snippet '{trigger}' -> '{content}'")
-        
+
         # Wait for physical keys to be released to avoid Wayland dropping injected keys
         if hasattr(self.listener, 'pressed_keys'):
             # Allow up to 500ms for keys to be released
@@ -154,17 +169,17 @@ class SnippetListener:
                 if not self.listener.pressed_keys:
                     break
                 time.sleep(0.01)
-                
+
         # 1. Backspace the trigger
         # We need to be careful not to delete too fast or too slow.
         for _ in range(len(trigger)):
             self.keyboard_controller.tap(Key.backspace)
             time.sleep(0.01) # Small delay to ensure backspaces register
-        
+
         # 2. Inject content
         # Strategy: Use direct typing for short snippets (more reliable on Wayland)
         # Use clipboard for long snippets (faster)
-        
+
         if len(content) < 50:
             print("Using direct typing for expansion")
             self.keyboard_controller.type(content)
@@ -174,22 +189,23 @@ class SnippetListener:
             try:
                 # Save old clipboard if possible (best effort)
                 old_clipboard = clipboard.paste().decode('utf-8')
-            except:
+            except Exception:
+                logging.error('Failed to save old clipboard', exc_info=True)
                 old_clipboard = ""
 
             clipboard.copy(content)
-            
+
             # 2b. Paste
             # Simulating Ctrl+V
             # Note: In some terminals Ctrl+Shift+V is needed. This is hard to detect.
             # But standard GTK/Cosmic apps use Ctrl+V.
             time.sleep(0.1) # Wait for clipboard to update
-            
+
             with self.keyboard_controller.pressed(Key.ctrl):
                 self.keyboard_controller.tap('v')
-                
+
             # Give it a moment, then restore clipboard?
-            # Text expanders usually restore clipboard. 
-            time.sleep(0.2) 
+            # Text expanders usually restore clipboard.
+            time.sleep(0.2)
             if old_clipboard:
                  clipboard.copy(old_clipboard)
