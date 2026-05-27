@@ -1,9 +1,18 @@
+# Copyright (C) 2026 Chuck Talk <cwtalk1@gmail.com>
+# This file is part of Rheolwyr.
+#
+# Rheolwyr is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, version 3.
+#
+# Rheolwyr is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY. See the GNU AGPL v3 for details.
 
-import evdev
+
 import select
 import threading
-import time
-import sys
+
+import evdev
 
 # Try to import pynput keys for compatibility
 try:
@@ -44,9 +53,9 @@ class EvdevListener:
         self.running = False
         self.thread = None
         self._stop_event = threading.Event()
-        
+
         self.pressed_keys = set()
-        
+
         # Modifier state
         self.modifiers = {
             'shift': False,
@@ -59,7 +68,7 @@ class EvdevListener:
     def start(self):
         if self.running:
             return
-            
+
         # Find keyboards
         devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
         self.keyboards = []
@@ -69,7 +78,7 @@ class EvdevListener:
                 keys = cap[evdev.ecodes.EV_KEY]
                 if evdev.ecodes.KEY_A in keys:
                     self.keyboards.append(dev)
-        
+
         if not self.keyboards:
             print("EvdevListener: No keyboards found.")
             return
@@ -90,21 +99,21 @@ class EvdevListener:
     def _run(self):
         # We need a map of FD -> Device
         fds = {dev.fd: dev for dev in self.keyboards}
-        
+
         while self.running and not self._stop_event.is_set():
             try:
                 r, w, x = select.select(fds, [], [], 0.5)
             except Exception as e:
                 print(f"EvdevListener select error: {e}")
                 break
-                
+
             if not r:
                 continue
-                
+
             for fd in r:
                 dev = fds.get(fd)
                 if not dev: continue
-                
+
                 try:
                     for event in dev.read():
                         if event.type == evdev.ecodes.EV_KEY:
@@ -115,17 +124,17 @@ class EvdevListener:
 
     def _process_key(self, event):
         # value 0=up, 1=down, 2=hold
-        # We process on down (1) and hold (2) typically? 
+        # We process on down (1) and hold (2) typically?
         # pynput usually triggers on press (down).
-        
+
         key_code = event.code
         val = event.value
-        
+
         if val == 1:
             self.pressed_keys.add(key_code)
         elif val == 0:
             self.pressed_keys.discard(key_code)
-            
+
         # Update modifiers
         if key_code in [evdev.ecodes.KEY_LEFTSHIFT, evdev.ecodes.KEY_RIGHTSHIFT]:
             self.modifiers['shift'] = (val > 0)
@@ -135,7 +144,7 @@ class EvdevListener:
             self.modifiers['alt'] = (val > 0)
         elif key_code == evdev.ecodes.KEY_CAPSLOCK and val == 1:
             self.modifiers['caps'] = not self.modifiers['caps']
-            
+
         if val == 1: # Key Press
             key_obj = self._map_key(key_code)
             if key_obj and self.on_press:
@@ -146,7 +155,7 @@ class EvdevListener:
 
     def _map_key(self, code):
         # Map evdev code to pynput Key or KeyCode
-        
+
         # 1. Check for special keys
         special_map = {
             evdev.ecodes.KEY_BACKSPACE: Key.backspace,
@@ -179,18 +188,18 @@ class EvdevListener:
             evdev.ecodes.KEY_F9: Key.f9, evdev.ecodes.KEY_F10: Key.f10,
             evdev.ecodes.KEY_F11: Key.f11, evdev.ecodes.KEY_F12: Key.f12,
         }
-        
+
         if code in special_map:
             return special_map[code]
-            
+
         # 2. Check for char keys
         # Uses evdev key names to derive chars
         key_name = evdev.ecodes.keys.get(code)
         if isinstance(key_name, list): key_name = key_name[0]
-        
+
         if not key_name or not isinstance(key_name, str):
             return None
-            
+
         base_char = None
         if key_name.startswith('KEY_'):
             suffix = key_name[4:]
@@ -209,13 +218,13 @@ class EvdevListener:
             elif suffix == 'COMMA': base_char = ','
             elif suffix == 'DOT': base_char = '.'
             elif suffix == 'SLASH': base_char = '/'
-            
+
         if base_char:
             # Apply modifiers
             char = base_char
             shift = self.modifiers['shift']
             caps = self.modifiers['caps']
-            
+
             if base_char.isalpha():
                 if shift != caps:
                     char = base_char.upper()
@@ -230,7 +239,7 @@ class EvdevListener:
                         ',':'<', '.':'>', '/':'?'
                     }
                     char = sym_map.get(base_char, base_char)
-            
+
             return KeyCode(char=char)
-            
+
         return None

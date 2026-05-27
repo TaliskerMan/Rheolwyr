@@ -5,7 +5,9 @@
 import os
 import sqlite3
 from typing import List, Optional, Tuple
+
 from gi.repository import GLib
+
 
 class Database:
     def __init__(self, db_path: str = None):
@@ -90,19 +92,19 @@ class Database:
             import json
             with open(filepath, 'r') as f:
                 data = json.load(f)
-            
+
             existing = self.get_all_snippets()
             # Create a set of (name, content, trigger) for quick dedup
             existing_set = {(s[1], s[2], s[3] if s[3] else "") for s in existing}
-            
+
             for item in data:
                 name = item.get("name")
                 content = item.get("content")
                 trigger = item.get("trigger", "")
-                
+
                 if not name or not content:
                     continue
-                    
+
                 if (name, content, trigger) not in existing_set:
                     self.add_snippet(name, content, trigger)
                     imported_count += 1

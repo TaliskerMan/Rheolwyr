@@ -1,5 +1,16 @@
-import subprocess
+# Copyright (C) 2026 Chuck Talk <cwtalk1@gmail.com>
+# This file is part of Rheolwyr.
+#
+# Rheolwyr is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, version 3.
+#
+# Rheolwyr is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY. See the GNU AGPL v3 for details.
+
 import shutil
+import subprocess
+
 
 def is_wayland():
     import os
@@ -15,7 +26,7 @@ def copy(text):
                 return
             except subprocess.CalledProcessError:
                 pass
-    
+
     # Fallback to xclip or if not wayland
     if shutil.which("xclip"):
         try:
@@ -38,5 +49,5 @@ def paste():
             return result.stdout
         except subprocess.CalledProcessError:
             pass
-            
+
     return b""

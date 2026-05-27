@@ -3,35 +3,38 @@
 # Licensed under GPLv3 or later
 
 import importlib.metadata
-import json
+
 import gi
+
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
-from gi.repository import Gtk, Adw, Gio, GObject
-from .database import Database
+from gi.repository import Adw, Gio, Gtk
+
 from . import config
+from .database import Database
+
 
 class RheolwyrWindow(Adw.ApplicationWindow):
     def __init__(self, app):
         super().__init__(application=app, title="Rheolwyr")
         self.db = Database()
         self.current_snippet_id = None
-        
+
         # Apply persisted theme
         initial_scheme = config.get_theme_scheme()
         self.set_theme(initial_scheme, save=False)
 
         self.set_default_size(800, 600)
-        
+
         # Main Layout
         self.split_view = Adw.OverlaySplitView()
         self.set_content(self.split_view)
-        
+
         # Sidebar (Snippet List)
         self.sidebar_page = Adw.NavigationPage(title="Snippets", tag="sidebar")
-        
+
         sidebar_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        
+
         # Toolbar for sidebar
         sidebar_header = Adw.HeaderBar(show_end_title_buttons=False)
         add_btn = Gtk.Button(icon_name="list-add-symbolic")
@@ -46,14 +49,14 @@ class RheolwyrWindow(Adw.ApplicationWindow):
         # Add separator logic or just append
         # Gio.Menu doesn't have a simple separator method in minimal usage, usually handled by sections.
         # We'll just create a section for About to separate it visually if possible, or just append.
-        
+
 
         section_main = Gio.Menu()
         section_main.append("Import Snippets", "win.import-snippets")
         section_main.append("Export Snippets", "win.export-snippets")
         section_main.append("Instructions", "win.instructions")
         theme_menu.append_section(None, section_main)
-        
+
         section = Gio.Menu()
         section.append("About Rheolwyr", "win.about")
         theme_menu.append_section(None, section)
@@ -61,25 +64,25 @@ class RheolwyrWindow(Adw.ApplicationWindow):
         theme_btn = Gtk.MenuButton(icon_name="open-menu-symbolic")
         theme_btn.set_menu_model(theme_menu)
         sidebar_header.pack_end(theme_btn)
-        
+
         # Theme Actions
         action_system = Gio.SimpleAction.new("theme-system", None)
         action_system.connect("activate", lambda a, p: self.set_theme(Adw.ColorScheme.DEFAULT))
         self.add_action(action_system)
-        
+
         action_light = Gio.SimpleAction.new("theme-light", None)
         action_light.connect("activate", lambda a, p: self.set_theme(Adw.ColorScheme.FORCE_LIGHT))
         self.add_action(action_light)
-        
+
         action_dark = Gio.SimpleAction.new("theme-dark", None)
         action_dark.connect("activate", lambda a, p: self.set_theme(Adw.ColorScheme.FORCE_DARK))
         self.add_action(action_dark)
-        
+
 
         action_import = Gio.SimpleAction.new("import-snippets", None)
         action_import.connect("activate", self.on_import_action)
         self.add_action(action_import)
-        
+
         action_export = Gio.SimpleAction.new("export-snippets", None)
         action_export.connect("activate", self.on_export_action)
         self.add_action(action_export)
@@ -87,31 +90,31 @@ class RheolwyrWindow(Adw.ApplicationWindow):
         action_instructions = Gio.SimpleAction.new("instructions", None)
         action_instructions.connect("activate", self.on_instructions_action)
         self.add_action(action_instructions)
-        
+
         action_about = Gio.SimpleAction.new("about", None)
         action_about.connect("activate", self.on_about_action)
         self.add_action(action_about)
         sidebar_box.append(sidebar_header)
-        
+
         # ListBox for snippets
         self.listbox = Gtk.ListBox()
         self.listbox.set_selection_mode(Gtk.SelectionMode.SINGLE)
         self.listbox.connect("row-selected", self.on_row_selected)
-        
+
         scrolled = Gtk.ScrolledWindow()
         scrolled.set_child(self.listbox)
         scrolled.set_vexpand(True)
         sidebar_box.append(scrolled)
-        
+
         self.sidebar_page.set_child(sidebar_box)
         self.split_view.set_sidebar(self.sidebar_page)
         self.split_view.set_min_sidebar_width(250)
-        
+
         # Content (Editor)
         self.content_page = Adw.NavigationPage(title="Editor", tag="content")
-        
+
         content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        
+
         # Toolbar for content
         content_header = Adw.HeaderBar()
         self.save_btn = Gtk.Button(label="Save")
@@ -119,22 +122,22 @@ class RheolwyrWindow(Adw.ApplicationWindow):
         self.save_btn.connect("clicked", self.on_save_clicked)
         self.save_btn.set_sensitive(False)
         content_header.pack_end(self.save_btn)
-        
+
         self.delete_btn = Gtk.Button(icon_name="user-trash-symbolic")
         self.delete_btn.add_css_class("destructive-action")
         self.delete_btn.connect("clicked", self.on_delete_clicked)
         self.delete_btn.set_sensitive(False)
         content_header.pack_end(self.delete_btn)
-        
+
         content_box.append(content_header)
-        
+
         # Editor Fields
         form_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         form_box.set_margin_top(20)
         form_box.set_margin_bottom(20)
         form_box.set_margin_start(20)
         form_box.set_margin_end(20)
-        
+
         # Name Entry
         self.name_entry = Adw.EntryRow(title="Snippet Name")
         form_box.append(self.name_entry)
@@ -142,39 +145,39 @@ class RheolwyrWindow(Adw.ApplicationWindow):
         # Trigger Entry
         self.trigger_entry = Adw.EntryRow(title="Trigger Text (e.g. ;sig)")
         form_box.append(self.trigger_entry)
-        
+
         # Content View
         editor_label = Gtk.Label(label="Snippet Content", xalign=0)
         editor_label.add_css_class("heading")
         form_box.append(editor_label)
-        
+
         self.text_view = Gtk.TextView()
         self.text_view.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
         self.text_view.set_vexpand(True)
         self.text_buffer = self.text_view.get_buffer()
-        
+
         editor_scroll = Gtk.ScrolledWindow()
         editor_scroll.set_child(self.text_view)
         editor_scroll.set_vexpand(True)
         editor_scroll.set_min_content_height(200)
-        
+
         # Frame for editor to look nice
         frame = Gtk.Frame()
         frame.set_child(editor_scroll)
         form_box.append(frame)
-        
+
         content_box.append(form_box)
-        
+
         self.content_page.set_child(content_box)
         self.split_view.set_content(self.content_page)
-        
+
         self.load_snippets()
 
     def load_snippets(self):
         # Clear existing
         while self.listbox.get_first_child():
             self.listbox.remove(self.listbox.get_first_child())
-            
+
         snippets = self.db.get_all_snippets()
         row_to_select = None
         for s in snippets:
@@ -184,10 +187,10 @@ class RheolwyrWindow(Adw.ApplicationWindow):
             row.set_child(label)
             row.snippet_id = s[0]
             self.listbox.append(row)
-            
+
             if self.current_snippet_id and row.snippet_id == self.current_snippet_id:
                 row_to_select = row
-        
+
         if row_to_select:
             self.listbox.select_row(row_to_select)
 
@@ -222,7 +225,7 @@ class RheolwyrWindow(Adw.ApplicationWindow):
         start_iter = self.text_buffer.get_start_iter()
         end_iter = self.text_buffer.get_end_iter()
         content = self.text_buffer.get_text(start_iter, end_iter, True)
-        
+
         # Basic validation
         if not name:
             # Minimal feedback: don't save if empty name
@@ -232,9 +235,9 @@ class RheolwyrWindow(Adw.ApplicationWindow):
             self.db.update_snippet(self.current_snippet_id, name, content, trigger)
         else:
             self.current_snippet_id = self.db.add_snippet(name, content, trigger)
-            
+
         self.load_snippets()
-        
+
     def on_delete_clicked(self, btn):
         if self.current_snippet_id:
             self.db.delete_snippet(self.current_snippet_id)
@@ -305,7 +308,7 @@ Use the menu to export your snippets to a JSON file for backup, or import snippe
     def on_import_action(self, action, param):
         dialog = Gtk.FileDialog()
         dialog.set_title("Import Snippets")
-        
+
         filters = Gio.ListStore.new(Gtk.FileFilter)
         filter_json = Gtk.FileFilter()
         filter_json.set_name("JSON Files")
@@ -313,7 +316,7 @@ Use the menu to export your snippets to a JSON file for backup, or import snippe
         filter_json.add_pattern("*.json")
         filters.append(filter_json)
         dialog.set_filters(filters)
-        
+
         dialog.open(self, None, self.on_import_dialog_open_cb)
 
     def on_import_dialog_open_cb(self, dialog, result):
@@ -329,14 +332,14 @@ Use the menu to export your snippets to a JSON file for backup, or import snippe
                     self.show_message_dialog("Information", "Import completed. No new snippets were added (all were duplicates).")
                 else:
                     self.show_message_dialog("Error", "Failed to import snippets. Check file format.")
-        except gi.repository.GLib.GError as e:
+        except gi.repository.GLib.GError:
             pass # User cancelled or similar
 
     def on_export_action(self, action, param):
         dialog = Gtk.FileDialog()
         dialog.set_title("Export Snippets")
         dialog.set_initial_name("rheolwyr_snippets.json")
-        
+
         dialog.save(self, None, self.on_export_dialog_save_cb)
 
     def on_export_dialog_save_cb(self, dialog, result):
@@ -351,5 +354,5 @@ Use the menu to export your snippets to a JSON file for backup, or import snippe
                     self.show_message_dialog("Success", "Snippets exported successfully.")
                 else:
                     self.show_message_dialog("Error", "Failed to export snippets.")
-        except gi.repository.GLib.GError as e:
+        except gi.repository.GLib.GError:
             pass # User cancelled

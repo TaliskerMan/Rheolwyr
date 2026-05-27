@@ -1,13 +1,24 @@
+# Copyright (C) 2026 Chuck Talk <cwtalk1@gmail.com>
+# This file is part of Rheolwyr.
+#
+# Rheolwyr is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, version 3.
+#
+# Rheolwyr is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY. See the GNU AGPL v3 for details.
 
-import time
-import threading
-import sys
+
 import os
+import sys
+import threading
+import time
 
 # Ensure we can import from src
 sys.path.insert(0, os.path.abspath('src'))
 
 from pynput import keyboard
+
 from rheolwyr.uinput_controller import UInputController
 
 # Global verification state
@@ -33,15 +44,15 @@ def main():
     # 1. Start Listener in a thread
     t = threading.Thread(target=run_listener)
     t.start()
-    
+
     # Give it time to start
     time.sleep(2)
-    
+
     # 2. Inject keys via UInputController
     print("Injecting 'test' via UInputController...")
     try:
         controller = UInputController()
-        # Ensure we have focus/time? 
+        # Ensure we have focus/time?
         # Actually uinput injection is global, listener should hear it if it's working globally.
         for char in "test":
             controller.tap(char)
@@ -60,10 +71,10 @@ def main():
     # 4. Check results
     print(f"Received keys: {received_keys}")
     expected = ['t', 'e', 's', 't']
-    
+
     # We might receive more keys if there's noise, but we should at least see ours
     # Note: pynput might see 't', 'e', 's', 't' or KeyCode objects.
-    
+
     # Simplified check
     data_str = "".join([str(k) for k in received_keys])
     if "test" in data_str or all(k in received_keys for k in expected):

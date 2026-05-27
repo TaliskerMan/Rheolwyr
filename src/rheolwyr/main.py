@@ -2,16 +2,19 @@
 # Copyright (C) 2026 Chuck Talk <cwtalk1@gmail.com>
 # Licensed under GPLv3 or later
 
-import sys
-import gi
 import signal
+import sys
+
+import gi
 
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
 
-from gi.repository import Gtk, Adw, Gio, GLib
-from .window import RheolwyrWindow
+from gi.repository import Adw, Gio, GLib
+
 from .listener import SnippetListener
+from .window import RheolwyrWindow
+
 
 class RheolwyrApp(Adw.Application):
     def __init__(self):
@@ -29,7 +32,7 @@ class RheolwyrApp(Adw.Application):
         if not self.window:
             self.window = RheolwyrWindow(self)
         self.window.present()
-        
+
         # Start listener
         try:
             self.listener = SnippetListener()
