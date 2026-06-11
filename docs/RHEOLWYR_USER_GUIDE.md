@@ -1,75 +1,112 @@
-# Rheolwyr - Comprehensive User Guide
+# Rheolwyr — Text Expander & Hardening Manual
 
-Welcome to **Rheolwyr**! Rheolwyr (Welsh for "Manager," pronounced *Hre-aw-lur*) is a native, high-performance text expander explicitly designed for modern Linux desktops running GNOME or Cosmic on Wayland and X11.
+Welcome to **Rheolwyr** (Welsh for "Manager," pronounced *Hre-aw-lur*). Rheolwyr is a native, high-performance text expansion and snippet utility designed specifically for GNOME and Cosmic desktop environments on Linux.
 
-Built with love for the community at large, Rheolwyr was developed with a singular, unwavering philosophy: **Privacy, security, and control matter.**
-
----
-
-## 🔒 1. Philosophy: Your Words Are Yours
-
-Every modern desktop needs a snippet tool for efficient work execution. However, many contemporary typing assistants and expanders operate in the cloud. They log your keystrokes, upload your thoughts, train machine learning models on your syntax, and gather your unique writing style to package it for others.
-
-**Rheolwyr operates differently:**
-* **Zero Telemetry:** Your snippets never leave your local machine.
-* **No Cloud Syncing:** Your thoughts and styles are your private property, not data to be shared online.
-* **Local Database:** All snippets are stored securely in a local SQLite database entirely within your control.
+Built on the core principles of privacy and control, Rheolwyr keeps your snippets localized, secure, and entirely within your domain.
 
 ---
 
-## 🚀 2. What Rheolwyr Does
+## 🔒 1. Privacy & Telemetry Disclosures
 
-Rheolwyr saves you thousands of keystrokes by automatically expanding short "triggers" into longer blocks of text.
-
-**What it is used for:**
-* **Email Signatures:** Type `;sig` and instantly expand it to your full, multi-line professional signature.
-* **Code Blocks:** Create triggers for commonly used programming boilerplate.
-* **Support Responses:** Rapidly deploy standardized replies in helpdesk environments.
-
-### Expansion Modes (What You Need to Be Aware Of)
-Rheolwyr dynamically chooses how to inject text based on the length of your snippet:
-1. **Short Snippets (< 50 characters):** Rheolwyr simulates typing each individual character. This is the most robust method and guarantees compatibility across secure terminal environments and strict Wayland sandboxes.
-2. **Long Snippets (50+ characters):** Simulating hundreds of keystrokes takes too long. For large blocks of text, Rheolwyr instantly copies the text to your system clipboard, simulates a `Ctrl+V` paste command, and restores your previous clipboard history.
+*   **Zero Telemetry:** Snippets never leave your computer. We do not log keystrokes to the cloud or track your writing habits.
+*   **Local Caching:** All snippets are stored securely in a local SQLite database at `~/.local/share/rheolwyr/snippets.db` (respecting `XDG_DATA_HOME`).
+*   **Independent Clipboard:** Clipboard handling is executed locally using native system binaries (`wl-clipboard` / `xclip`), completely bypassing external library dependencies.
 
 ---
 
-## 💾 3. Installation Instructions
+## 🚀 2. Core Capabilities & Expansion Modes
 
-Because Rheolwyr operates at the system level to monitor global keystrokes and inject text across all applications, it must be installed natively via a Debian package (`.deb`). 
+Rheolwyr intercepts abbreviation triggers (e.g. `;sig`) and replaces them with configured text.
 
-### Step 1: Install the Package
-Download the latest `rheolwyr_*_all.deb` file from the official releases and run:
+### Expansion Modes
+
+Rheolwyr dynamically adjusts its insertion mechanism based on the size of the replacement string to ensure optimal performance and sandboxing compatibility:
+
+| Expansion Mode | Trigger Threshold | Operation | Compatibility |
+| :--- | :--- | :--- | :--- |
+| **Keystroke Simulation** | Snippets < 50 characters | Simulates typing each individual letter. | Highly compatible; works inside secure Wayland sandboxes and strict terminal grids. |
+| **Clipboard Injection** | Snippets 50+ characters | Copies text to clipboard, fires `Ctrl+V` paste commands, and restores previous clipboard history. | Designed for long paragraphs and code block boilerplates. |
+
+---
+
+## ⚙️ 3. Wayland & Cosmic Configuration (CRITICAL)
+
+To capture keystrokes and inject text on modern Wayland desktop sessions, your user account must have permissions to access Linux `uinput` nodes.
+
+### Setup Instructions
+1.  **Add User to Input Groups:**
+    ```bash
+    sudo usermod -aG input,uinput $USER
+    ```
+2.  **Apply Group Permissions:**
+    > [!IMPORTANT]
+    > **Log Out Required:** You must completely log out of your desktop session and log back in (or reboot the system) for the group membership changes to take effect.
+
+### Dropped Character Wayland Safeguard (v0.4.11+)
+Legacy Linux expanders often suffer from character dropout when typing quickly on Wayland. Rheolwyr v0.4.11+ resolves this by explicitly waiting for physical key release events before executing the expansion sequence, guaranteeing zero character dropouts.
+
+---
+
+## 💾 4. Installation & Verification
+
+Rheolwyr is packaged and distributed natively as a Debian package (`.deb`).
+
 ```bash
+# Install the package and resolve required clipboard tools (xclip / wl-clipboard)
 sudo apt install ./rheolwyr_*_all.deb
 ```
-*(Using `apt` instead of `dpkg` automatically resolves any required dependencies like `xclip` and `wl-clipboard`.)*
-
-### Step 2: System Configuration (CRITICAL)
-For text expansion to function on Wayland, your user account **must** have permission to monitor input devices and inject keys via `uinput`.
-1. Add your user to the required system groups:
-   ```bash
-   sudo usermod -aG input,uinput $USER
-   ```
-2. **Log Out & Log In:** Group permission changes will *not* take effect until you completely log out of your desktop session and log back in (or reboot your machine).
 
 ---
 
-## 🎮 4. Navigation & Usage
+## 🛠️ 5. Technical Stack & Dependencies
 
-### The Main Interface
-1. **Launch the App:** Open your Application grid and launch Rheolwyr (look for the "R" icon).
-2. **System Tray:** Rheolwyr is designed to run silently in the background. Closing the main window will minimize it to your system tray or background processes.
-
-### Creating a Snippet
-1. Click the **Add (+) button** in the split-view editor.
-2. **Trigger:** Define the short keystroke that will activate the snippet. *(Pro-tip: Prefix triggers with a punctuation mark like a semicolon `;` so you don't accidentally expand common words. Example: `;em` instead of `em`)*.
-3. **Replacement Text:** Type the full text block you want to appear when the trigger is typed.
-4. **Save:** Your snippet is instantly saved to the local database and is immediately active.
-
-### Triggering a Snippet
-1. Open any application (a text editor, web browser, or terminal).
-2. Type your trigger (e.g., `;sig`).
-3. Rheolwyr intercepts the keystrokes, automatically hits `Backspace` to remove your trigger text, and seamlessly injects the replacement text.
+| Component | Library / Package | Role |
+| :--- | :--- | :--- |
+| **UI Framework** | PyGObject (GTK4 + Libadwaita) | Delivers GNOME/Cosmic native desktop layout aesthetics. |
+| **Keystroke Tracker** | `pynput` | Listens for keyboard triggers. |
+| **Key Injector** | `evdev` | Synthesizes expansion outputs via `uinput`. |
+| **Clipboard (Wayland)** | `wl-clipboard` | Manages clipboard data copy/paste operations on Wayland. |
+| **Clipboard (X11)** | `xclip` | Manages clipboard data copy/paste operations on X11. |
 
 ---
-*Rheolwyr - Your style, your thoughts, your control. Distributed under the GNU GPL v3.*
+
+## 🏗️ 6. Automated Packaging & Release Pipeline
+
+Rheolwyr compiles and signs production bundles automatically via `build_release.sh`:
+
+```mermaid
+graph TD
+    StartPipeline([Start: build_release.sh]) --> Deps[1. Verify packaging deps: debhelper, dh-python, python3-all]
+    Deps --> Version[2. Run scripts/increment_version.py: Update version files]
+    Version --> Build[3. Compile package via dpkg-buildpackage]
+    Build --> Sign[4. Sign package with GPG key: chuck@nordheim.online]
+    Sign --> Stage[5. Move compiled .deb and changes files to artifacts/]
+    Stage --> Checksum[6. Compute SHA512 hash values: SHA512SUMS]
+    Checksum --> EndPipeline([End: Signed release ready in ./artifacts])
+```
+
+To verify the integrity and authenticity of the release package:
+```bash
+# Check the SHA512 checksum list
+cd artifacts
+sha512sum -c SHA512SUMS
+```
+
+---
+
+## 🔄 7. Workstation Telemetry Architecture
+
+```mermaid
+graph TD
+    User[1. User types snippet abbreviation e.g. ;sig] --> KeyCheck{2. Did the trigger match a database row?}
+    KeyCheck -- No --> OutputNormal[Normal character output]
+    KeyCheck -- Yes --> WaitRelease[3. Wait for physical key release event]
+    WaitRelease --> ModeCheck{4. Replacement length < 50 chars?}
+    ModeCheck -- Yes --> Typing[5. Simulate backspace keys & type snippet characters]
+    ModeCheck -- No --> Clipboard[6. Copy to clipboard, paste via Ctrl+V, restore clipboard]
+    Typing --> ActiveApp([Text expanded in active window])
+    Clipboard --> ActiveApp
+```
+
+---
+*Rheolwyr is distributed under the GNU General Public License v3.*
