@@ -8,6 +8,12 @@
 # Rheolwyr is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY. See the GNU AGPL v3 for details.
 
+"""
+Controller Setup Verification Utility.
+
+Checks if SnippetListener correctly binds UInputController when Wayland is detected.
+"""
+
 import os
 import sys
 

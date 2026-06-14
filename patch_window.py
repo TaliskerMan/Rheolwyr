@@ -9,6 +9,12 @@
 # but WITHOUT ANY WARRANTY. See the GNU AGPL v3 for details.
 
 
+"""
+Window Patch utility script.
+
+Applies menu options and custom import/export widgets to RheolwyrWindow dynamically.
+"""
+
 file_path = "/home/freecode/antigrav/Rheolwyr/src/rheolwyr/window.py"
 with open(file_path, "r") as f:
     orig = f.read()

@@ -47,7 +47,15 @@ except ImportError:
     EvdevListener = None
 
 class SnippetListener:
+    """
+    Main controller for keyboard event capturing and snippet substitution.
+    """
     def __init__(self):
+        """
+        Initialize the database handle, state trackers, and the correct keyboard injection controller.
+        
+        Selects UInputController on Wayland and PynputController on X11 fallback.
+        """
         self.db = Database()
         self.buffer = ""
         self.max_buffer_size = 50
@@ -77,6 +85,9 @@ class SnippetListener:
         self.running = False
 
     def start(self):
+        """
+        Start the background event listener thread.
+        """
         if self.running:
             return
         self.running = True
@@ -111,11 +122,17 @@ class SnippetListener:
              print(f"Failed to start pynput Listener: {e}")
 
     def stop(self):
+        """
+        Stop the active input listener.
+        """
         if self.listener:
             self.listener.stop()
         self.running = False
 
     def on_press(self, key):
+        """
+        Handle character keypress events by appending to the buffer and checking trigger matches.
+        """
         if not self.running:
             return
 
@@ -142,6 +159,9 @@ class SnippetListener:
             print(f"Error in listener: {e}")
 
     def check_match(self):
+        """
+        Inspect the current input buffer to determine if it ends with a snippet trigger keyword.
+        """
         # We need to check if the *end* of the buffer matches any trigger.
         # This is a bit inefficient (checking all triggers on every keypress).
         # Optimization: Get all triggers once or cache them?
@@ -160,6 +180,12 @@ class SnippetListener:
                 break
 
     def expand_snippet(self, trigger, content):
+        """
+        Replace trigger text with the expanded snippet content.
+        
+        Backspaces the trigger characters and simulates keyboard pasting (Ctrl+V)
+        via the selected keyboard controller.
+        """
         print(f"DEBUG: Expanding snippet '{trigger}' -> '{content}'")
 
         # Wait for physical keys to be released to avoid Wayland dropping injected keys

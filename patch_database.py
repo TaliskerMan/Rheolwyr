@@ -8,8 +8,16 @@
 # Rheolwyr is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY. See the GNU AGPL v3 for details.
 
+"""
+Database Patch utility script.
+
+Applies required SQLite import/export features directly to the database access module.
+"""
 
 def apply_patch():
+    """
+    Read the database module file and append import/export database routines if missing.
+    """
     file_path = "/home/freecode/antigrav/Rheolwyr/src/rheolwyr/database.py"
     with open(file_path, "r") as f:
         content = f.read()

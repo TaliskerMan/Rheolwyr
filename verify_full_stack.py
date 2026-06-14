@@ -9,6 +9,13 @@
 # but WITHOUT ANY WARRANTY. See the GNU AGPL v3 for details.
 
 
+"""
+Full-Stack Injection and Listening Integration Test.
+
+Performs virtual key injection via UInputController and verifies if
+SnippetListener successfully receives and parses the keys in the buffer.
+"""
+
 import os
 import sys
 import time
@@ -22,6 +29,9 @@ from rheolwyr.uinput_controller import UInputController
 
 
 def main():
+    """
+    Start the listener, inject character keystrokes, and assert if the buffer matches the input.
+    """
     print("Initializing SnippetListener...")
     listener = SnippetListener()
 

@@ -8,16 +8,29 @@
 # Rheolwyr is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY. See the GNU AGPL v3 for details.
 
+"""
+Clipboard Integration Utilities.
+
+Provides Wayland and X11 clipboard access via wl-clipboard or xclip
+for expanding snippets and recovering the original clipboard state.
+"""
+
 import shutil
 import subprocess
 
-
 def is_wayland():
+    """
+    Check if the active desktop session is running under Wayland.
+    """
     import os
     return "WAYLAND_DISPLAY" in os.environ or os.environ.get("XDG_SESSION_TYPE") == "wayland"
 
-
 def copy(text):
+    """
+    Copy utf-8 text content to the clipboard.
+    
+    Tries wl-copy on Wayland, and falls back to xclip.
+    """
     text_bytes = text.encode('utf-8')
     if is_wayland():
         if shutil.which("wl-copy"):
@@ -35,6 +48,9 @@ def copy(text):
             pass
 
 def paste():
+    """
+    Paste raw byte contents from the system clipboard.
+    """
     if is_wayland():
         if shutil.which("wl-paste"):
             try:

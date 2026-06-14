@@ -8,6 +8,13 @@
 # Rheolwyr is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY. See the GNU AGPL v3 for details.
 
+"""
+Application Configuration and Theme Preferences Module.
+
+Loads and saves user configuration preferences from/to config.json
+and provides Libadwaita color scheme translators.
+"""
+
 import json
 from pathlib import Path
 
@@ -22,7 +29,11 @@ DEFAULT_CONFIG = {
 }
 
 def load_config():
-    """Load configuration from JSON file."""
+    """
+    Load configuration parameters from the local configuration file.
+    
+    Falls back to default configurations on parsing failure or missing files.
+    """
     if not CONFIG_FILE.exists():
         return DEFAULT_CONFIG.copy()
 
@@ -33,7 +44,9 @@ def load_config():
         return DEFAULT_CONFIG.copy()
 
 def save_config(data):
-    """Save configuration to JSON file."""
+    """
+    Save the given configuration data dictionary to config.json.
+    """
     try:
         CONFIG_DIR.mkdir(parents=True, exist_ok=True)
         with open(CONFIG_FILE, 'w') as f:
@@ -42,7 +55,9 @@ def save_config(data):
         print(f"Failed to save config: {e}")
 
 def get_theme_scheme():
-    """Get the Adw.ColorScheme based on stored config."""
+    """
+    Resolve the Adw.ColorScheme enum matching the stored theme configuration.
+    """
     config = load_config()
     theme = config.get("theme", "system")
 
@@ -54,7 +69,9 @@ def get_theme_scheme():
         return Adw.ColorScheme.DEFAULT
 
 def set_theme_preference(scheme):
-    """Save the theme preference based on the scheme enum."""
+    """
+    Save the user theme preference derived from a Libadwaita ColorScheme enum.
+    """
     config = load_config()
 
     if scheme == Adw.ColorScheme.FORCE_LIGHT:

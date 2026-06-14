@@ -48,7 +48,13 @@ except ImportError:
             self.char = char
 
 class EvdevListener:
+    """
+    Keyboard listener using evdev to capture key events from Linux event devices.
+    """
     def __init__(self, on_press=None):
+        """
+        Initialize modifiers state tracker and stop threads controllers.
+        """
         self.on_press = on_press
         self.running = False
         self.thread = None
@@ -66,9 +72,9 @@ class EvdevListener:
         }
 
     def start(self):
-        if self.running:
-            return
-
+        """
+        Scan and bind to available keyboard event devices, then start the polling thread.
+        """
         # Find keyboards
         devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
         self.keyboards = []
@@ -91,12 +97,18 @@ class EvdevListener:
         self.thread.start()
 
     def stop(self):
+        """
+        Stop the device polling loop and join the execution thread.
+        """
         self.running = False
         self._stop_event.set()
         if self.thread:
             self.thread.join(timeout=1.0)
 
     def _run(self):
+        """
+        Polling thread execution block using select to monitor keycode inputs.
+        """
         # We need a map of FD -> Device
         fds = {dev.fd: dev for dev in self.keyboards}
 
@@ -123,10 +135,9 @@ class EvdevListener:
                     del fds[fd]
 
     def _process_key(self, event):
-        # value 0=up, 1=down, 2=hold
-        # We process on down (1) and hold (2) typically?
-        # pynput usually triggers on press (down).
-
+        """
+        Parse raw key events, update active modifier keys, and trigger callbacks on presses.
+        """
         key_code = event.code
         val = event.value
 
@@ -154,8 +165,11 @@ class EvdevListener:
                     print(f"Error in on_press: {e}")
 
     def _map_key(self, code):
-        # Map evdev code to pynput Key or KeyCode
-
+        """
+        Translate raw evdev keycodes to pynput Key/KeyCode structures.
+        
+        Applies active shift/caps modifiers to punctuation and alphanumeric characters.
+        """
         # 1. Check for special keys
         special_map = {
             evdev.ecodes.KEY_BACKSPACE: Key.backspace,

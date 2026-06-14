@@ -15,7 +15,13 @@ from .database import Database
 
 
 class RheolwyrWindow(Adw.ApplicationWindow):
+    """
+    Main Libadwaita Window representing the Rheolwyr user interface.
+    """
     def __init__(self, app):
+        """
+        Initialize the window layout, widgets, and signal bindings.
+        """
         super().__init__(application=app, title="Rheolwyr")
         self.db = Database()
         self.current_snippet_id = None
@@ -174,6 +180,9 @@ class RheolwyrWindow(Adw.ApplicationWindow):
         self.load_snippets()
 
     def load_snippets(self):
+        """
+        Retrieve all snippets from the database and populate the sidebar listbox.
+        """
         # Clear existing
         while self.listbox.get_first_child():
             self.listbox.remove(self.listbox.get_first_child())
@@ -195,6 +204,9 @@ class RheolwyrWindow(Adw.ApplicationWindow):
             self.listbox.select_row(row_to_select)
 
     def on_add_clicked(self, btn):
+        """
+        Clear form fields to prepare the window to receive details for a new snippet.
+        """
         self.current_snippet_id = None
         self.name_entry.set_text("New Snippet")
         self.trigger_entry.set_text("")
@@ -205,6 +217,9 @@ class RheolwyrWindow(Adw.ApplicationWindow):
         self.name_entry.grab_focus()
 
     def on_row_selected(self, box, row):
+        """
+        Load the details of the selected snippet row into the form editor.
+        """
         if row:
             self.current_snippet_id = row.snippet_id
             data = self.db.get_snippet_by_id(self.current_snippet_id)
@@ -220,6 +235,9 @@ class RheolwyrWindow(Adw.ApplicationWindow):
             pass
 
     def on_save_clicked(self, btn):
+        """
+        Validate input fields and save the snippet to the SQLite database.
+        """
         name = self.name_entry.get_text()
         trigger = self.trigger_entry.get_text()
         start_iter = self.text_buffer.get_start_iter()
@@ -239,6 +257,9 @@ class RheolwyrWindow(Adw.ApplicationWindow):
         self.load_snippets()
 
     def on_delete_clicked(self, btn):
+        """
+        Remove the current snippet from the database and clear the editor fields.
+        """
         if self.current_snippet_id:
             self.db.delete_snippet(self.current_snippet_id)
             self.current_snippet_id = None
@@ -250,12 +271,18 @@ class RheolwyrWindow(Adw.ApplicationWindow):
             self.load_snippets()
 
     def set_theme(self, scheme, save=True):
+        """
+        Apply the selected Adw.ColorScheme and optionally save it to preferences.
+        """
         manager = Adw.StyleManager.get_default()
         manager.set_color_scheme(scheme)
         if save:
             config.set_theme_preference(scheme)
 
     def on_about_action(self, action, param):
+        """
+        Display the Libadwaita About dialog populated with application metadata.
+        """
         about = Adw.AboutWindow(
             transient_for=self,
             application_name="Rheolwyr",
@@ -270,6 +297,9 @@ class RheolwyrWindow(Adw.ApplicationWindow):
         about.present()
 
     def show_message_dialog(self, heading, message):
+        """
+        Display a basic alert dialog box with a message.
+        """
         dialog = Adw.MessageDialog(
             transient_for=self,
             heading=heading,
@@ -279,6 +309,9 @@ class RheolwyrWindow(Adw.ApplicationWindow):
         dialog.present()
 
     def on_instructions_action(self, action, param):
+        """
+        Display the instructions and user guide alert dialog window.
+        """
         instructions_text = """
 <b>Welcome to Rheolwyr!</b>
 
@@ -306,6 +339,9 @@ Use the menu to export your snippets to a JSON file for backup, or import snippe
         dialog.present()
 
     def on_import_action(self, action, param):
+        """
+        Open a file chooser dialog to select a JSON file to import snippets from.
+        """
         dialog = Gtk.FileDialog()
         dialog.set_title("Import Snippets")
 
@@ -320,6 +356,9 @@ Use the menu to export your snippets to a JSON file for backup, or import snippe
         dialog.open(self, None, self.on_import_dialog_open_cb)
 
     def on_import_dialog_open_cb(self, dialog, result):
+        """
+        Handle the completion of the import file chooser callback.
+        """
         try:
             file = dialog.open_finish(result)
             if file:
@@ -336,6 +375,9 @@ Use the menu to export your snippets to a JSON file for backup, or import snippe
             pass # User cancelled or similar
 
     def on_export_action(self, action, param):
+        """
+        Open a file chooser dialog to select a destination file to export snippets.
+        """
         dialog = Gtk.FileDialog()
         dialog.set_title("Export Snippets")
         dialog.set_initial_name("rheolwyr_snippets.json")
@@ -343,6 +385,9 @@ Use the menu to export your snippets to a JSON file for backup, or import snippe
         dialog.save(self, None, self.on_export_dialog_save_cb)
 
     def on_export_dialog_save_cb(self, dialog, result):
+        """
+        Handle the completion of the export file chooser callback.
+        """
         try:
             file = dialog.save_finish(result)
             if file:

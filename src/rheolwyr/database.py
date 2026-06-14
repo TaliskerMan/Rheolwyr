@@ -8,9 +8,22 @@ from typing import List, Optional, Tuple
 
 from gi.repository import GLib
 
+"""
+Database Access Provider Module.
+
+Manages snippet entries, triggers, shortcuts, and content using an SQLite3 database backend.
+"""
 
 class Database:
+    """
+    Handler for SQLite database operations related to Rheolwyr snippets.
+    """
     def __init__(self, db_path: str = None):
+        """
+        Initialize the database connection.
+        
+        Creates the database and schema under user local data if no custom path is given.
+        """
         if db_path is None:
             data_dir = os.path.join(GLib.get_user_data_dir(), "rheolwyr")
             os.makedirs(data_dir, exist_ok=True)
@@ -20,6 +33,9 @@ class Database:
         self._init_db()
 
     def _init_db(self):
+        """
+        Create the target snippets table if it does not already exist.
+        """
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute("""
@@ -34,6 +50,9 @@ class Database:
             conn.commit()
 
     def add_snippet(self, name: str, content: str, trigger: str = "") -> int:
+        """
+        Insert a new snippet into the database and return its auto-incremented ID.
+        """
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute(
@@ -43,6 +62,9 @@ class Database:
             return cursor.lastrowid
 
     def update_snippet(self, snippet_id: int, name: str, content: str, trigger: str):
+        """
+        Update fields of a pre-existing snippet matching the given ID.
+        """
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute(
@@ -51,23 +73,35 @@ class Database:
             )
 
     def delete_snippet(self, snippet_id: int):
+        """
+        Remove a snippet matching the given ID from database records.
+        """
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute("DELETE FROM snippets WHERE id = ?", (snippet_id,))
 
     def get_all_snippets(self) -> List[Tuple]:
+        """
+        Retrieve all stored snippets ordered alphabetically by name.
+        """
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT id, name, content, trigger FROM snippets ORDER BY name")
             return cursor.fetchall()
 
     def get_snippet_by_id(self, snippet_id: int) -> Optional[Tuple]:
+        """
+        Retrieve a single snippet matching the given ID.
+        """
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT id, name, content, trigger FROM snippets WHERE id = ?", (snippet_id,))
             return cursor.fetchone()
 
     def export_snippets(self, filepath: str) -> bool:
+        """
+        Serialize all database snippets into a JSON formatted file.
+        """
         try:
             snippets = self.get_all_snippets()
             data = []
@@ -87,6 +121,11 @@ class Database:
             return False
 
     def import_snippets(self, filepath: str) -> int:
+        """
+        Parse and import whitelisted snippets from a JSON file.
+        
+        Validates content and filters out duplicate records. Returns imported counts.
+        """
         imported_count = 0
         try:
             import json

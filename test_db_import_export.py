@@ -8,6 +8,12 @@
 # Rheolwyr is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY. See the GNU AGPL v3 for details.
 
+"""
+Database Serialization Integration Test Suite.
+
+Verifies snippet JSON database exporting and parsing import mechanisms.
+"""
+
 import json
 import os
 
@@ -15,6 +21,9 @@ from rheolwyr.database import Database
 
 
 def test_import_export():
+    """
+    Simulate exporting a set of snippets, importing them into a fresh DB, and verify consistency.
+    """
     db_path = "test_snippets.db"
     if os.path.exists(db_path):
         os.remove(db_path)

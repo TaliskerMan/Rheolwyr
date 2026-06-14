@@ -8,6 +8,11 @@
 # Rheolwyr is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY. See the GNU AGPL v3 for details.
 
+"""
+Pynput Fallback Input Listener Test.
+
+Checks if the pynput keyboard hook successfully launches without crashing.
+"""
 
 import time
 
@@ -15,6 +20,9 @@ from pynput import keyboard
 
 
 def on_press(key):
+    """
+    Callback triggered on key press; immediately stops the listener.
+    """
     print(f"Key pressed: {key}")
     return False # Stop listener
 

@@ -9,6 +9,13 @@
 # but WITHOUT ANY WARRANTY. See the GNU AGPL v3 for details.
 
 
+"""
+Listener Event Loop Verification Utility.
+
+Fires up the pynput listener on a secondary thread, injects keyboard events
+using UInputController globally, and asserts if pynput captures the keystrokes.
+"""
+
 import os
 import sys
 import threading
@@ -25,7 +32,11 @@ from rheolwyr.uinput_controller import UInputController
 received_keys = []
 stop_event = threading.Event()
 
+
 def on_press(key):
+    """
+    Log captured keystroke items in the temporary test results array.
+    """
     try:
         if hasattr(key, 'char') and key.char:
             received_keys.append(key.char)
@@ -35,12 +46,18 @@ def on_press(key):
         print(f"Error in on_press: {e}")
 
 def run_listener():
+    """
+    Launch the keyboard listener context and wait for the thread stop signal.
+    """
     print("Starting pynput listener...")
     with keyboard.Listener(on_press=on_press) as listener:
         stop_event.wait()
         print("Stopping listener...")
 
 def main():
+    """
+    Coordinate the test lifecycle: listener thread, key injection, and assertions.
+    """
     # 1. Start Listener in a thread
     t = threading.Thread(target=run_listener)
     t.start()

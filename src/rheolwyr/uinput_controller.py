@@ -25,6 +25,9 @@ class UInputController:
     Requires user to be in 'input' or 'uinput' group and /dev/uinput to have correct permissions.
     """
     def __init__(self):
+        """
+        Setup virtual keyboard device capabilities, mappings, and initialize the virtual keyboard descriptor.
+        """
         if evdev is None:
             raise ImportError("evdev library is required for UInputController")
 
@@ -91,7 +94,9 @@ class UInputController:
         }
 
     def _get_keycode(self, key):
-        """Resolves a key (char or pynput Key) to an evdev keycode and modifier requirement."""
+        """
+        Resolve a key representation (char or pynput Key) to an evdev keycode and modifier flags.
+        """
         try:
             from pynput.keyboard import Key
         except ImportError:
@@ -162,7 +167,9 @@ class UInputController:
         return None, False
 
     def tap(self, key):
-        """Press and release a key."""
+        """
+        Simulate a key press and release event including modifiers if required.
+        """
         ecode, need_shift = self._get_keycode(key)
         if ecode:
             if need_shift:
@@ -182,7 +189,9 @@ class UInputController:
 
     @contextmanager
     def pressed(self, key):
-        """Context manager to hold a key down."""
+        """
+        Context manager to hold a key down and release it upon exit.
+        """
         ecode, _ = self._get_keycode(key)
         if ecode:
             self.ui.write(e.EV_KEY, ecode, 1)
@@ -195,6 +204,8 @@ class UInputController:
                 time.sleep(0.01)
 
     def type(self, text):
-        """Type a string of characters."""
+        """
+        Type a sequence of characters sequentially.
+        """
         for char in text:
             self.tap(char)

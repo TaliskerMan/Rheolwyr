@@ -8,3 +8,10 @@
 # Rheolwyr is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY. See the GNU AGPL v3 for details.
 
+"""
+Rheolwyr: Linux-native Text Snippet Expansion and Manager.
+
+This package provides custom background keypress interception services (evdev),
+keystroke matching logic, clipboard helpers, SQLite database management,
+and a modern Libadwaita snippet manager interface.
+"""
