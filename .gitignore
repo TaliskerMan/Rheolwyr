@@ -36,3 +36,30 @@ debian/files
 debian/*.substvars
 debian/*.debhelper
 debian/debhelper-build-stamp
+
+# Build / release / signing artifacts — never commit these
+artifacts/
+build-dir/
+repo/
+dpkg-sign.*/
+*.deb
+*.changes
+*.buildinfo
+*.dsc
+*.asc
+SHA512SUMS
+report.json
+
+# GPG key-generation material must never be in version control
+gpg_batch
+gpg-gen-batch
+*_pub.asc
+public_key.asc
+
+# Stray dev/scratch scripts
+patch_*.py
+verify_*.py
+test_pynput.py
+test_db_import_export.py
+src/test_listener.py
+venv/

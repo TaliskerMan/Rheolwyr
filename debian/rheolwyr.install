@@ -1,5 +1,6 @@
 src/rheolwyr /usr/lib/python3/dist-packages/
 data/99-rheolwyr.rules /lib/udev/rules.d/
+data/uinput.conf /usr/lib/modules-load.d/
 data/com.taliskerman.rheolwyr.desktop /usr/share/applications/
 data/icons/hicolor /usr/share/icons/
 

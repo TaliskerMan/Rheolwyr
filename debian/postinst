@@ -7,25 +7,45 @@ if [ "$1" = "configure" ]; then
         echo "Creating 'uinput' group..."
         addgroup --system uinput
     fi
-    
+
+    # Ensure the uinput kernel module is loaded now and on every boot, so
+    # /dev/uinput exists and injection works on first run (it is not
+    # auto-loaded on many distributions). modules-load.d/uinput.conf handles
+    # subsequent boots; modprobe handles the current one.
+    if command -v modprobe >/dev/null; then
+        echo "Loading 'uinput' kernel module..."
+        modprobe uinput || echo "  (could not modprobe uinput now; it will load on next boot)"
+    fi
+
     # Reload udev rules
     if command -v udevadm >/dev/null; then
         echo "Reloading udev rules..."
         udevadm control --reload-rules || true
         udevadm trigger || true
     fi
-    
+
     if command -v gtk-update-icon-cache >/dev/null; then
         gtk-update-icon-cache -f -t /usr/share/icons/hicolor || true
     fi
-    
+
     echo "----------------------------------------------------------------"
     echo "Rheolwyr installed."
-    echo "IMPORTANT: To use text expansion on Wayland, you must satisfy"
-    echo "one of the following:"
-    echo "1. Add your user to the 'uinput' and 'input' groups:"
+    echo
+    echo "SECURITY NOTICE — please read before enabling expansion:"
+    echo "Rheolwyr expands text by reading your keystrokes globally. On"
+    echo "Wayland this requires adding your user to the 'input' group, which"
+    echo "grants that account read access to ALL /dev/input/event* devices —"
+    echo "i.e. the ability to read EVERY keystroke from EVERY application,"
+    echo "system-wide and permanently, not only while Rheolwyr runs."
+    echo
+    echo "Rheolwyr itself does not record or log keystrokes (its match buffer"
+    echo "is in-memory and discarded), but the group membership is a lasting"
+    echo "privilege grant to your account. Only proceed if you accept that."
+    echo "See SECURITY.md for least-privilege alternatives."
+    echo
+    echo "To enable expansion, opt in by joining the groups:"
     echo "   sudo usermod -aG input,uinput <username>"
-    echo "   (You must log out and log back in for this to take effect)"
+    echo "   (Log out and back in for this to take effect.)"
     echo "----------------------------------------------------------------"
 fi
 

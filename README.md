@@ -1,8 +1,20 @@
 # <img src="data/rheolwyr.png" width="48" height="48" align="center" alt="Rheolwyr Icon"> Rheolwyr
 
 Linux text expander.
-Version 0.4.11
+Version 0.5.0
 Rheolwyr ("Manager" in Welsh), pronounced "Hre-aw-lur", is a Linux-native text snippet manager designed for Pop!_OS Cosmic and GNOME on Wayland.
+
+> **Security notice:** Rheolwyr reads your keystrokes globally to detect
+> triggers. On Wayland this requires adding your user to the `input` group,
+> which grants that account the ability to read **every keystroke from every
+> application**, system-wide and permanently. Rheolwyr does not record or log
+> keystrokes, but the group membership is a lasting privilege grant. Please read
+> [SECURITY.md](SECURITY.md) — including the least-privilege alternatives —
+> before enabling expansion.
+
+Triggers expand when followed by a **word boundary** (space or tab): typing a
+trigger such as `addr` followed by a space expands it, while typing `address`
+does not falsely fire it.
 
 ## Features
 

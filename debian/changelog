@@ -1,3 +1,22 @@
+rheolwyr (0.5.0-1) unstable; urgency=medium
+
+  * Security: disclose that enabling expansion adds the user to the 'input'
+    group (system-wide keystroke read access); make it an explicit opt-in and
+    document least-privilege alternatives in SECURITY.md.
+  * Security: stop printing snippet trigger/content to stdout/journald; route
+    debug output through logging, silent by default, never including content.
+  * Fix: word-boundary trigger matching (no more firing 'addr' inside
+    'address'); reset buffer on Enter/navigation keys to avoid cursor desync.
+  * Fix: ignore self-injected input (exclude our own uinput device by name plus
+    a post-injection suppression window) so expansion does not feed back.
+  * Fix: modprobe uinput in postinst and ship modules-load.d/uinput.conf so
+    /dev/uinput exists on first run.
+  * Cache triggers in memory; content-type-aware clipboard restore.
+  * Normalize licensing to GPLv3 across source headers; reconcile version to
+    0.5.0; purge build/signing artifacts and GPG batch files from git.
+
+ -- Chuck Talk <chuck@nordheim.online>  Tue, 23 Jun 2026 12:00:00 -0500
+
 rheolwyr (0.4.15-1) unstable; urgency=medium
 
   * Release 0.4.15: Fixed dropped character on Wayland by waiting for

@@ -1,5 +1,5 @@
 # Rheolwyr - Linux Text Expander
-# Copyright (C) 2026 Chuck Talk <cwtalk1@gmail.com>
+# Copyright (C) 2026 Chuck Talk <chuck@nordheim.online>
 # Licensed under GPLv3 or later
 
 import importlib.metadata
@@ -203,6 +203,20 @@ class RheolwyrWindow(Adw.ApplicationWindow):
         if row_to_select:
             self.listbox.select_row(row_to_select)
 
+    def _notify_snippets_changed(self):
+        """
+        Tell the running listener to refresh its in-memory trigger cache after a
+        snippet is added, edited, deleted, or imported (P1-6), so expansion
+        reflects the current set without querying the database on every keypress.
+        """
+        app = self.get_application()
+        listener = getattr(app, "listener", None) if app else None
+        if listener is not None:
+            try:
+                listener.refresh_snippets()
+            except Exception:
+                pass
+
     def on_add_clicked(self, btn):
         """
         Clear form fields to prepare the window to receive details for a new snippet.
@@ -255,6 +269,7 @@ class RheolwyrWindow(Adw.ApplicationWindow):
             self.current_snippet_id = self.db.add_snippet(name, content, trigger)
 
         self.load_snippets()
+        self._notify_snippets_changed()
 
     def on_delete_clicked(self, btn):
         """
@@ -269,6 +284,7 @@ class RheolwyrWindow(Adw.ApplicationWindow):
             self.save_btn.set_sensitive(False)
             self.delete_btn.set_sensitive(False)
             self.load_snippets()
+            self._notify_snippets_changed()
 
     def set_theme(self, scheme, save=True):
         """
@@ -366,6 +382,7 @@ Use the menu to export your snippets to a JSON file for backup, or import snippe
                 count = self.db.import_snippets(path)
                 if count > 0:
                     self.load_snippets()
+                    self._notify_snippets_changed()
                     self.show_message_dialog("Success", f"Successfully imported {count} snippets.")
                 elif count == 0:
                     self.show_message_dialog("Information", "Import completed. No new snippets were added (all were duplicates).")

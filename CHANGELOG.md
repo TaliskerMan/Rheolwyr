@@ -4,6 +4,50 @@ All notable changes to the Rheolwyr project are documented in this file. This pr
 
 ---
 
+## [0.5.0] - 2026-06-23
+
+### Security
+- **Disclosed the input-group capability.** README and `SECURITY.md` now state
+  plainly that enabling expansion adds your user to the `input` group, granting
+  read access to every keystroke from every application, system-wide and
+  permanently. Joining the group is an explicit, informed opt-in (the package
+  never does it automatically), and least-privilege alternatives (dedicated
+  service user, udev device scoping, X11-only) are documented.
+- **Stopped leaking snippet content to logs.** Removed the `DEBUG` prints of
+  trigger/content (which landed in the systemd journal); logging now goes
+  through the standard `logging` module, is silent by default, and never
+  includes snippet bodies.
+
+### Fixed
+- **Trigger matching no longer fires mid-word.** Expansion now requires a word
+  boundary (space/tab): `addr ` expands, typing `address` does not. The buffer
+  resets on Enter/navigation/editing keys so it can no longer desync from the
+  real cursor and delete unintended text.
+- **Injection no longer feeds back into the listener.** The evdev listener
+  ignores our own virtual injector device by name, plus a short suppression
+  window during/after injection, so injected characters and the simulated
+  Ctrl+V are not read back or re-triggered.
+- **`/dev/uinput` exists on first run.** `postinst` now `modprobe`s `uinput` and
+  installs `modules-load.d/uinput.conf`, so injection works out of the box on
+  distributions that don't auto-load the module.
+
+### Changed
+- **Triggers are cached in memory** and refreshed on snippet add/edit/delete/
+  import, instead of querying SQLite on every keystroke.
+- **Clipboard restore is content-type aware**: a binary clipboard (e.g. an
+  image) is no longer decoded or clobbered during long-snippet paste.
+- **Licensing normalized to GPLv3** across source headers (the `LICENSE` file
+  and `pyproject` were already GPLv3; several headers incorrectly said AGPL),
+  and contact normalized to chuck@nordheim.online.
+- **Version reconciled to 0.5.0** (README previously said 0.4.11; tree was
+  0.4.15) and the README documents the new word-boundary behaviour.
+- **Repository cleanup**: removed build/signing artifacts and GPG key-generation
+  batch files from version control and ignored them going forward; removed stray
+  `patch_*`/`verify_*`/`test_*` dev scripts.
+- **Added a pytest suite** for trigger matching and the shift/caps key map.
+
+---
+
 ## [0.4.11] - [0.4.15] - 2026-03-23
 
 ### Fixed

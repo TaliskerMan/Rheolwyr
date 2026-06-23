@@ -18,7 +18,7 @@ Follow these steps to build and release a new version of Rheolwyr.
    ```
    This will:
    - Auto-increment the version.
-   - Build and **sign** the Debian package (requires GPG key for `Chuck Talk <cwtalk1@gmail.com>`).
+   - Build and **sign** the Debian package (requires GPG key for `Chuck Talk <chuck@nordheim.online>`).
    - Generate `SHA512SUMS` in `release_artifacts/`.
 
 ## Verification

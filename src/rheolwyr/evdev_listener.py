@@ -1,18 +1,25 @@
-# Copyright (C) 2026 Chuck Talk <cwtalk1@gmail.com>
+# Copyright (C) 2026 Chuck Talk <chuck@nordheim.online>
 # This file is part of Rheolwyr.
 #
 # Rheolwyr is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as
+# it under the terms of the GNU General Public License as
 # published by the Free Software Foundation, version 3.
 #
 # Rheolwyr is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY. See the GNU AGPL v3 for details.
+# but WITHOUT ANY WARRANTY. See the GNU GPL v3 for details.
 
 
+import logging
 import select
 import threading
 
 import evdev
+
+logger = logging.getLogger(__name__)
+
+# Name of our own virtual injection device. We must never listen to it, or the
+# characters we inject would be read straight back into the match buffer.
+_OWN_DEVICE_NAME = "Rheolwyr-UInput-Keyboard"
 
 # Try to import pynput keys for compatibility
 try:
@@ -79,6 +86,10 @@ class EvdevListener:
         devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
         self.keyboards = []
         for dev in devices:
+            # Never bind to our own virtual injector (P1-5): otherwise injected
+            # characters and the simulated Ctrl+V are read back and re-trigger.
+            if dev.name == _OWN_DEVICE_NAME:
+                continue
             cap = dev.capabilities()
             if evdev.ecodes.EV_KEY in cap:
                 keys = cap[evdev.ecodes.EV_KEY]
@@ -86,10 +97,10 @@ class EvdevListener:
                     self.keyboards.append(dev)
 
         if not self.keyboards:
-            print("EvdevListener: No keyboards found.")
+            logger.warning("EvdevListener: No keyboards found.")
             return
 
-        print(f"EvdevListener: Listening on {len(self.keyboards)} devices.")
+        logger.info("EvdevListener: Listening on %d devices.", len(self.keyboards))
         self.running = True
         self._stop_event.clear()
         self.thread = threading.Thread(target=self._run)
@@ -116,7 +127,7 @@ class EvdevListener:
             try:
                 r, w, x = select.select(fds, [], [], 0.5)
             except Exception as e:
-                print(f"EvdevListener select error: {e}")
+                logger.error("EvdevListener select error: %s", e)
                 break
 
             if not r:
@@ -162,7 +173,7 @@ class EvdevListener:
                 try:
                     self.on_press(key_obj)
                 except Exception as e:
-                    print(f"Error in on_press: {e}")
+                    logger.error("Error in on_press: %s", e)
 
     def _map_key(self, code):
         """
@@ -234,26 +245,11 @@ class EvdevListener:
             elif suffix == 'SLASH': base_char = '/'
 
         if base_char:
-            # Apply modifiers
-            char = base_char
-            shift = self.modifiers['shift']
-            caps = self.modifiers['caps']
-
-            if base_char.isalpha():
-                if shift != caps:
-                    char = base_char.upper()
-            else:
-                if shift:
-                    # Symbol map
-                    sym_map = {
-                        '1':'!', '2':'@', '3':'#', '4':'$', '5':'%',
-                        '6':'^', '7':'&', '8':'*', '9':'(', '0':')',
-                        '-':'_', '=':'+', '[':'{', ']':'}',
-                        ';':':', "'":'"', '`':'~', '\\':'|',
-                        ',':'<', '.':'>', '/':'?'
-                    }
-                    char = sym_map.get(base_char, base_char)
-
+            char = apply_shift_caps(
+                base_char,
+                self.modifiers['shift'],
+                self.modifiers['caps'],
+            )
             return KeyCode(char=char)
 
         return None
