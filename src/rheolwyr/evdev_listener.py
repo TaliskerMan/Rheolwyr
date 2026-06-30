@@ -120,30 +120,32 @@ class EvdevListener:
         """
         Polling thread execution block using select to monitor keycode inputs.
         """
-        # We need a map of FD -> Device
         fds = {dev.fd: dev for dev in self.keyboards}
 
         while self.running and not self._stop_event.is_set():
+            self._poll_devices(fds)
+
+    def _poll_devices(self, fds):
+        try:
+            r, w, x = select.select(fds, [], [], 0.5)
+        except Exception as exception:
+            logger.error("EvdevListener select error: %s", exception)
+            return
+
+        if not r:
+            return
+
+        for fd in r:
+            dev = fds.get(fd)
+            if not dev: continue
+
             try:
-                r, w, x = select.select(fds, [], [], 0.5)
-            except Exception as e:
-                logger.error("EvdevListener select error: %s", e)
-                break
-
-            if not r:
-                continue
-
-            for fd in r:
-                dev = fds.get(fd)
-                if not dev: continue
-
-                try:
-                    for event in dev.read():
-                        if event.type == evdev.ecodes.EV_KEY:
-                            self._process_key(event)
-                except OSError:
-                    # Device lost
-                    del fds[fd]
+                for event in dev.read():
+                    if event.type == evdev.ecodes.EV_KEY:
+                        self._process_key(event)
+            except OSError:
+                # Device lost
+                del fds[fd]
 
     def _process_key(self, event):
         """
@@ -158,12 +160,13 @@ class EvdevListener:
             self.pressed_keys.discard(key_code)
 
         # Update modifiers
-        if key_code in [evdev.ecodes.KEY_LEFTSHIFT, evdev.ecodes.KEY_RIGHTSHIFT]:
-            self.modifiers['shift'] = (val > 0)
-        elif key_code in [evdev.ecodes.KEY_LEFTCTRL, evdev.ecodes.KEY_RIGHTCTRL]:
-            self.modifiers['ctrl'] = (val > 0)
-        elif key_code in [evdev.ecodes.KEY_LEFTALT, evdev.ecodes.KEY_RIGHTALT]:
-            self.modifiers['alt'] = (val > 0)
+        _MODIFIER_MAP = {
+            evdev.ecodes.KEY_LEFTSHIFT: 'shift', evdev.ecodes.KEY_RIGHTSHIFT: 'shift',
+            evdev.ecodes.KEY_LEFTCTRL: 'ctrl', evdev.ecodes.KEY_RIGHTCTRL: 'ctrl',
+            evdev.ecodes.KEY_LEFTALT: 'alt', evdev.ecodes.KEY_RIGHTALT: 'alt',
+        }
+        if key_code in _MODIFIER_MAP:
+            self.modifiers[_MODIFIER_MAP[key_code]] = (val > 0)
         elif key_code == evdev.ecodes.KEY_CAPSLOCK and val == 1:
             self.modifiers['caps'] = not self.modifiers['caps']
 
@@ -172,8 +175,8 @@ class EvdevListener:
             if key_obj and self.on_press:
                 try:
                     self.on_press(key_obj)
-                except Exception as e:
-                    logger.error("Error in on_press: %s", e)
+                except Exception as exception:
+                    logger.error("Error in on_press: %s", exception)
 
     def _map_key(self, code):
         """
@@ -228,21 +231,19 @@ class EvdevListener:
         base_char = None
         if key_name.startswith('KEY_'):
             suffix = key_name[4:]
+            
+            _PUNCTUATION_MAP = {
+                'MINUS': '-', 'EQUAL': '=', 'LEFTBRACE': '[', 'RIGHTBRACE': ']',
+                'SEMICOLON': ';', 'APOSTROPHE': "'", 'GRAVE': '`', 'BACKSLASH': '\\',
+                'COMMA': ',', 'DOT': '.', 'SLASH': '/'
+            }
+
             if len(suffix) == 1 and suffix.isalpha():
                 base_char = suffix.lower()
             elif suffix.isdigit():
                 base_char = suffix
-            elif suffix == 'MINUS': base_char = '-'
-            elif suffix == 'EQUAL': base_char = '='
-            elif suffix == 'LEFTBRACE': base_char = '['
-            elif suffix == 'RIGHTBRACE': base_char = ']'
-            elif suffix == 'SEMICOLON': base_char = ';'
-            elif suffix == 'APOSTROPHE': base_char = "'"
-            elif suffix == 'GRAVE': base_char = '`'
-            elif suffix == 'BACKSLASH': base_char = '\\'
-            elif suffix == 'COMMA': base_char = ','
-            elif suffix == 'DOT': base_char = '.'
-            elif suffix == 'SLASH': base_char = '/'
+            elif suffix in _PUNCTUATION_MAP:
+                base_char = _PUNCTUATION_MAP[suffix]
 
         if base_char:
             char = apply_shift_caps(

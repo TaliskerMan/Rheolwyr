@@ -51,8 +51,8 @@ def save_config(data):
         CONFIG_DIR.mkdir(parents=True, exist_ok=True)
         with open(CONFIG_FILE, 'w') as f:
             json.dump(data, f, indent=4)
-    except OSError as e:
-        print(f"Failed to save config: {e}")
+    except OSError as exception:
+        print(f"Failed to save config: {exception}")
 
 def get_theme_scheme():
     """

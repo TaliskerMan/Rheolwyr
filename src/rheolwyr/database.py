@@ -116,8 +116,8 @@ class Database:
             with open(filepath, 'w') as f:
                 json.dump(data, f, indent=4)
             return True
-        except Exception as e:
-            print(f"Error exporting snippets: {e}")
+        except Exception as exception:
+            print(f"Error exporting snippets: {exception}")
             return False
 
     def import_snippets(self, filepath: str) -> int:
@@ -148,6 +148,6 @@ class Database:
                     self.add_snippet(name, content, trigger)
                     imported_count += 1
             return imported_count
-        except Exception as e:
-            print(f"Error importing snippets: {e}")
+        except Exception as exception:
+            print(f"Error importing snippets: {exception}")
             return -1

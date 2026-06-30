@@ -9,12 +9,13 @@ import gi
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
 from gi.repository import Adw, Gio, Gtk
+from ag_gtk_utils.window import BaseWindow
 
 from . import config
 from .database import Database
 
 
-class RheolwyrWindow(Adw.ApplicationWindow):
+class RheolwyrWindow(BaseWindow):
     """
     Main Libadwaita Window representing the Rheolwyr user interface.
     """
@@ -22,7 +23,7 @@ class RheolwyrWindow(Adw.ApplicationWindow):
         """
         Initialize the window layout, widgets, and signal bindings.
         """
-        super().__init__(application=app, title="Rheolwyr")
+        super().__init__(app=app, title="Rheolwyr", default_width=800, default_height=600)
         self.db = Database()
         self.current_snippet_id = None
 
@@ -217,7 +218,7 @@ class RheolwyrWindow(Adw.ApplicationWindow):
             except Exception:
                 pass
 
-    def on_add_clicked(self, btn):
+    def on_add_clicked(self, _button):
         """
         Clear form fields to prepare the window to receive details for a new snippet.
         """
@@ -248,7 +249,7 @@ class RheolwyrWindow(Adw.ApplicationWindow):
             # But on_add_clicked handles specific clearing.
             pass
 
-    def on_save_clicked(self, btn):
+    def on_save_clicked(self, _button):
         """
         Validate input fields and save the snippet to the SQLite database.
         """
@@ -271,7 +272,7 @@ class RheolwyrWindow(Adw.ApplicationWindow):
         self.load_snippets()
         self._notify_snippets_changed()
 
-    def on_delete_clicked(self, btn):
+    def on_delete_clicked(self, _button):
         """
         Remove the current snippet from the database and clear the editor fields.
         """
@@ -286,14 +287,6 @@ class RheolwyrWindow(Adw.ApplicationWindow):
             self.load_snippets()
             self._notify_snippets_changed()
 
-    def set_theme(self, scheme, save=True):
-        """
-        Apply the selected Adw.ColorScheme and optionally save it to preferences.
-        """
-        manager = Adw.StyleManager.get_default()
-        manager.set_color_scheme(scheme)
-        if save:
-            config.set_theme_preference(scheme)
 
     def on_about_action(self, action, param):
         """
@@ -312,17 +305,6 @@ class RheolwyrWindow(Adw.ApplicationWindow):
         )
         about.present()
 
-    def show_message_dialog(self, heading, message):
-        """
-        Display a basic alert dialog box with a message.
-        """
-        dialog = Adw.MessageDialog(
-            transient_for=self,
-            heading=heading,
-            body=message
-        )
-        dialog.add_response("ok", "OK")
-        dialog.present()
 
     def on_instructions_action(self, action, param):
         """

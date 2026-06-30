@@ -25,6 +25,7 @@ import time
 from . import clipboard
 from .database import Database
 from .matching import find_trigger
+from ag_gtk_utils.listener import BaseListener
 
 logger = logging.getLogger(__name__)
 
@@ -75,7 +76,7 @@ _RESET_KEYS = {
 _RESET_KEYS.discard(None)
 
 
-class SnippetListener:
+class SnippetListener(BaseListener):
     """
     Main controller for keyboard event capturing and snippet substitution.
     """
@@ -111,11 +112,11 @@ class SnippetListener:
                 try:
                     self.keyboard_controller = UInputController()
                     logger.info("Using UInputController for injection")
-                except Exception as e:
-                    logger.error("Failed to initialize UInputController: %s", e)
+                except Exception as exception:
+                    logger.error("Failed to initialize UInputController: %s", exception)
                     # On Wayland, failure to get UInput means we likely can't inject.
                     # Raise error to notify user to check permissions.
-                    raise PermissionError(f"Failed to initialize UInput: {e}\nPlease ensure you are in the 'uinput' group.")
+                    raise PermissionError(f"Failed to initialize UInput: {exception}\nPlease ensure you are in the 'uinput' group.")
             else:
                 raise ImportError("evdev not found. Please install python3-evdev.")
         else:
@@ -165,9 +166,9 @@ class SnippetListener:
                         raise PermissionError("No keyboards detected. Please ensure you are in the 'input' group.")
 
                     return
-                except Exception as e:
-                    logger.error("Failed to start EvdevListener: %s", e)
-                    raise PermissionError(f"Failed to start Input Listener: {e}\nPlease ensure you are in the 'input' group.")
+                except Exception as exception:
+                    logger.error("Failed to start EvdevListener: %s", exception)
+                    raise PermissionError(f"Failed to start Input Listener: {exception}\nPlease ensure you are in the 'input' group.")
             else:
                 raise ImportError("evdev not found.")
 
@@ -175,8 +176,8 @@ class SnippetListener:
         try:
             self.listener = keyboard.Listener(on_press=self.on_press)
             self.listener.start()
-        except Exception as e:
-            logger.error("Failed to start pynput Listener: %s", e)
+        except Exception as exception:
+            logger.error("Failed to start pynput Listener: %s", exception)
 
     def stop(self):
         """

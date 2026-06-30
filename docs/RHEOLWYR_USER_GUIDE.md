@@ -9,6 +9,7 @@ Built on the core principles of privacy and control, Rheolwyr keeps your snippet
 ## 🔒 1. Privacy & Telemetry Disclosures
 
 *   **Zero Telemetry:** Snippets never leave your computer. We do not log keystrokes to the cloud or track your writing habits.
+*   **Log Privacy:** Snippet bodies are never leaked into the systemd journal or logs. Logging is silent by default.
 *   **Local Caching:** All snippets are stored securely in a local SQLite database at `~/.local/share/rheolwyr/snippets.db` (respecting `XDG_DATA_HOME`).
 *   **Independent Clipboard:** Clipboard handling is executed locally using native system binaries (`wl-clipboard` / `xclip`), completely bypassing external library dependencies.
 
@@ -16,7 +17,7 @@ Built on the core principles of privacy and control, Rheolwyr keeps your snippet
 
 ## 🚀 2. Core Capabilities & Expansion Modes
 
-Rheolwyr intercepts abbreviation triggers (e.g. `;sig`) and replaces them with configured text.
+Rheolwyr intercepts abbreviation triggers (e.g. `;sig`) and replaces them with configured text. **Note:** Expansion requires a word boundary (space or tab), so typing a longer word will not accidentally fire a substring trigger (e.g., typing `address` will not trigger an `addr ` snippet).
 
 ### Expansion Modes
 
@@ -25,7 +26,7 @@ Rheolwyr dynamically adjusts its insertion mechanism based on the size of the re
 | Expansion Mode | Trigger Threshold | Operation | Compatibility |
 | :--- | :--- | :--- | :--- |
 | **Keystroke Simulation** | Snippets < 50 characters | Simulates typing each individual letter. | Highly compatible; works inside secure Wayland sandboxes and strict terminal grids. |
-| **Clipboard Injection** | Snippets 50+ characters | Copies text to clipboard, fires `Ctrl+V` paste commands, and restores previous clipboard history. | Designed for long paragraphs and code block boilerplates. |
+| **Clipboard Injection** | Snippets 50+ characters | Copies text to clipboard, fires `Ctrl+V` paste commands, and safely restores previous clipboard history (including binary content like images). | Designed for long paragraphs and code block boilerplates. |
 
 ---
 
@@ -38,6 +39,8 @@ To capture keystrokes and inject text on modern Wayland desktop sessions, your u
     ```bash
     sudo usermod -aG input,uinput $USER
     ```
+    > [!WARNING]
+    > **Security Disclosure:** Adding your user to the `input` group grants read access to every keystroke from every application system-wide. This is an explicit opt-in. For higher security, consider least-privilege alternatives (e.g., a dedicated service user, scoping udev device rules, or running X11-only).
 2.  **Apply Group Permissions:**
     > [!IMPORTANT]
     > **Log Out Required:** You must completely log out of your desktop session and log back in (or reboot the system) for the group membership changes to take effect.
