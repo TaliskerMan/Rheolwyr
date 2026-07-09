@@ -2,7 +2,13 @@
 set -e
 
 # Auto-increment version/build number
-python3 "/Users/charlestalk/AntiGravity/workflow-tools/increment_build.py" "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WORKFLOW_TOOLS_DIR="$(cd "${SCRIPT_DIR}/../workflow-tools" 2>/dev/null && pwd || echo "")"
+if [ -n "$WORKFLOW_TOOLS_DIR" ] && [ -f "${WORKFLOW_TOOLS_DIR}/increment_build.py" ]; then
+    python3 "${WORKFLOW_TOOLS_DIR}/increment_build.py" "${SCRIPT_DIR}"
+else
+    echo "Warning: workflow-tools/increment_build.py not found, skipping increment"
+fi
 
 
 # Colors for output
@@ -55,6 +61,12 @@ mkdir -p artifacts
 echo -e "\n${GREEN}[1.5/3] Incrementing Version...${NC}"
 python3 scripts/increment_version.py
 
+# Get new version
+NEW_VERSION=$(dpkg-parsechangelog --show-field Version | cut -d- -f1)
+
+# Generate orig.tar.gz in parent directory to prevent dpkg-buildpackage from prompting
+tar --exclude=debian --exclude=.git --exclude=artifacts -czf "../rheolwyr_${NEW_VERSION}.orig.tar.gz" .
+
 echo -e "\n${GREEN}[2/3] Building Debian Package (Signed)...${NC}"
 # Removed -us -uc to allow signing, force sign with key
 dpkg-buildpackage --sign-key="chuck@nordheim.online"
@@ -69,7 +81,24 @@ cd artifacts
 sha512sum * > SHA512SUMS
 cd ..
 
+# Copy to NOBuilds directory
+echo -e "\n${GREEN}[4/4] Copying to NOBuilds directory...${NC}"
+NOBUILDS_DIR="${HOME}/NOBuilds/Rheolwyr/v${NEW_VERSION}"
+mkdir -p "${NOBUILDS_DIR}"
+
+cp artifacts/rheolwyr_${NEW_VERSION}* "${NOBUILDS_DIR}/" || true
+cp artifacts/SHA512SUMS "${NOBUILDS_DIR}/" || true
+gpg --armor --export "chuck@nordheim.online" > "${NOBUILDS_DIR}/pubkey.asc"
+cp LICENSE "${NOBUILDS_DIR}/"
+cp README.md "${NOBUILDS_DIR}/"
+cp Audit/sbom.json "${NOBUILDS_DIR}/" || true
+
+# Generate source code archive
+echo "Generating source tarball..."
+tar --exclude=debian --exclude=.git --exclude=artifacts -czf "${NOBUILDS_DIR}/rheolwyr_source.tar.gz" .
+
 echo -e "${GREEN}SUCCESS!${NC}"
 ARTIFACT_PATH=$(realpath artifacts)
 echo " - Artifacts are in: $ARTIFACT_PATH"
 echo " - Checksum file: $ARTIFACT_PATH/SHA512SUMS"
+echo " - Local NOBuilds: ${NOBUILDS_DIR}"

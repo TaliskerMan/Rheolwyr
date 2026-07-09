@@ -1,3 +1,17 @@
+rheolwyr (0.5.4-1) unstable; urgency=medium
+
+  * Release 0.5.4: Fixed dropped character on Wayland by waiting for
+    physical key release
+
+ -- Chuck Talk <chuck@nordheim.online>  Thu, 09 Jul 2026 14:12:11 -0400
+
+rheolwyr (0.5.2-1) unstable; urgency=medium
+
+  * Release 0.5.2: Fixed dropped character on Wayland by waiting for
+    physical key release
+
+ -- Chuck Talk <chuck@nordheim.online>  Wed, 08 Jul 2026 18:51:33 -0400
+
 rheolwyr (0.5.0-1) unstable; urgency=medium
 
   * Security: disclose that enabling expansion adds the user to the 'input'
