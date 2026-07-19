@@ -63,3 +63,5 @@ test_pynput.py
 test_db_import_export.py
 src/test_listener.py
 venv/
+
+.DS_Store
