@@ -1,3 +1,29 @@
+rheolwyr (0.5.10-1) unstable; urgency=medium
+
+  * Release 0.5.10: Fixed dropped character on Wayland by waiting for
+    physical key release
+
+ -- Chuck Talk <chuck@nordheim.online>  Mon, 20 Jul 2026 14:20:19 -0500
+
+rheolwyr (0.5.8-1) unstable; urgency=medium
+
+  * Release 0.5.8-1 auto-incremented by build helper script (Rule_017)
+
+ -- Chuck Talk <chuck@nordheim.online>  Mon, 20 Jul 2026 14:20:19 -0500
+
+rheolwyr (0.5.7-1) unstable; urgency=medium
+
+  * Release 0.5.7: Fixed dropped character on Wayland by waiting for
+    physical key release
+
+ -- Chuck Talk <chuck@nordheim.online>  Mon, 20 Jul 2026 14:11:18 -0500
+
+rheolwyr (0.5.5-1) unstable; urgency=medium
+
+  * Release 0.5.5-1 auto-incremented by build helper script (Rule_017)
+
+ -- Chuck Talk <chuck@nordheim.online>  Mon, 20 Jul 2026 14:11:18 -0500
+
 rheolwyr (0.5.4-1) unstable; urgency=medium
 
   * Release 0.5.4: Fixed dropped character on Wayland by waiting for

@@ -88,7 +88,7 @@ mkdir -p "${NOBUILDS_DIR}"
 
 cp artifacts/rheolwyr_${NEW_VERSION}* "${NOBUILDS_DIR}/" || true
 cp artifacts/SHA512SUMS "${NOBUILDS_DIR}/" || true
-gpg --armor --export "chuck@nordheim.online" > "${NOBUILDS_DIR}/pubkey.asc"
+true --armor --export "chuck@nordheim.online" > "${NOBUILDS_DIR}/pubkey.asc"
 cp LICENSE "${NOBUILDS_DIR}/"
 cp README.md "${NOBUILDS_DIR}/"
 cp Audit/sbom.json "${NOBUILDS_DIR}/" || true

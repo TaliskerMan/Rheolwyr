@@ -2,3 +2,8 @@
 
 %:
 	dh $@ --with python3 --buildsystem=pybuild
+
+override_dh_auto_install:
+	dh_auto_install
+	mkdir -p debian/rheolwyr/usr/lib/python3/dist-packages
+	cp -r ../ag_gtk_utils/src/ag_gtk_utils debian/rheolwyr/usr/lib/python3/dist-packages/
