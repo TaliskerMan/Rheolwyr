@@ -83,14 +83,15 @@ cd ..
 
 # Copy to NOBuilds directory
 echo -e "\n${GREEN}[4/4] Copying to NOBuilds directory...${NC}"
-NOBUILDS_DIR="${HOME}/NOBuilds/Rheolwyr/v${NEW_VERSION}"
+BUILD_DATE=$(date +%m-%d-%Y)
+NOBUILDS_DIR="${HOME}/NOBuilds/Rheolwyr-${BUILD_DATE}-${NEW_VERSION}"
 mkdir -p "${NOBUILDS_DIR}"
 
 cp artifacts/rheolwyr_${NEW_VERSION}* "${NOBUILDS_DIR}/" || true
 cp artifacts/SHA512SUMS "${NOBUILDS_DIR}/" || true
-true --armor --export "chuck@nordheim.online" > "${NOBUILDS_DIR}/pubkey.asc"
-cp LICENSE "${NOBUILDS_DIR}/"
-cp README.md "${NOBUILDS_DIR}/"
+gpg --armor --export "chuck@nordheim.online" > "${NOBUILDS_DIR}/pubkey.asc" || true
+cp LICENSE "${NOBUILDS_DIR}/" || true
+cp README.md "${NOBUILDS_DIR}/" || true
 cp Audit/sbom.json "${NOBUILDS_DIR}/" || true
 
 # Generate source code archive

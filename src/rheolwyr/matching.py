@@ -33,8 +33,7 @@ def trailing_token(buffer):
     """
     Return the maximal run of non-delimiter characters at the end of *buffer*.
 
-    This is the "word" immediately before the cursor — the only candidate that
-    may match a trigger, so a trigger fires only as a standalone word.
+    This helper is preserved for backward compatibility and string boundary checks.
     """
     token = buffer
     for delim in WORD_DELIMITERS:
@@ -46,15 +45,40 @@ def find_trigger(buffer, triggers):
     """
     Return the trigger that the end of *buffer* matches, or None.
 
-    A match requires the trailing token to equal a registered trigger exactly,
-    which prevents a trigger like ``addr`` firing while typing ``address``.
-    *triggers* may be any container supporting ``in`` (e.g. a dict of
-    trigger -> content).
+    Instant expansion logic (CP-ChangeComments: Updated trigger matching to fire
+    immediately upon shortcut entry without requiring Space or Tab delimiters,
+    cleanly backspacing all shortcut characters including sigils like ';'):
+    1. A trigger matches if buffer ends with the trigger string.
+    2. Sigil triggers (starting with non-alphanumeric chars like ';', ':', '!', '+')
+       expand instantly whenever completed.
+    3. Plain word triggers expand instantly if preceded by a non-alphanumeric character
+       (or start of buffer) to prevent false positives while typing longer words (e.g. 'address').
+    4. If multiple triggers match, the longest trigger takes precedence (e.g. ';sig' over ';s').
     """
-    token = trailing_token(buffer)
-    if token and token in triggers:
-        return token
-    return None
+    if not buffer or not triggers:
+        return None
+
+    matching_triggers = []
+    for trigger in triggers:
+        if not trigger:
+            continue
+        if buffer.endswith(trigger):
+            # Check boundary condition for plain word triggers
+            first_char = trigger[0]
+            if not first_char.isalnum():
+                # Sigil trigger (e.g. ';sig', '+pp') -> instant match
+                matching_triggers.append(trigger)
+            else:
+                # Alphanumeric trigger (e.g. 'brb', 'addr') -> check preceding character
+                prefix_len = len(buffer) - len(trigger)
+                if prefix_len == 0 or not buffer[prefix_len - 1].isalnum():
+                    matching_triggers.append(trigger)
+
+    if not matching_triggers:
+        return None
+
+    # Return the longest matching trigger to resolve overlaps (e.g. ';sig' over ';s')
+    return max(matching_triggers, key=len)
 
 
 def apply_shift_caps(base_char, shift, caps):

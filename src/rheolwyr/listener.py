@@ -189,13 +189,11 @@ class SnippetListener(BaseListener):
 
     def on_press(self, key):
         """
-        Handle a keypress: maintain the in-memory word buffer and, on a word
-        boundary, expand a matching trigger.
+        Handle a keypress: maintain the in-memory word buffer and check for instant trigger expansion.
 
-        Buffer rules (P1-4): printable characters extend the buffer; whitespace
-        delimiters attempt an expansion of the word just typed; navigation and
-        editing keys reset the buffer so it cannot desync from the real cursor
-        and cause stray backspaces.
+        Buffer rules: printable characters extend the buffer and trigger immediate
+        expansion checks (CP-ChangeComments: Instant trigger matching on keypress without space/tab);
+        delimiters and navigation keys update or reset the buffer as appropriate.
         """
         if not self.running:
             return
@@ -206,10 +204,9 @@ class SnippetListener(BaseListener):
 
         try:
             if key in _DELIMITER_KEYS:
-                # A word boundary: check the word that was just completed.
+                self.buffer += _DELIMITER_KEYS[key]
                 if self._try_expand():
                     return
-                self.buffer += _DELIMITER_KEYS[key]
             elif key == Key.backspace:
                 self.buffer = self.buffer[:-1]
             elif key in _RESET_KEYS:
@@ -218,6 +215,8 @@ class SnippetListener(BaseListener):
                 return
             elif hasattr(key, 'char') and key.char:
                 self.buffer += key.char
+                if self._try_expand():
+                    return
             else:
                 # Modifiers and other non-text keys: leave buffer unchanged.
                 return
@@ -230,11 +229,8 @@ class SnippetListener(BaseListener):
 
     def _try_expand(self):
         """
-        If the word immediately before the cursor is a registered trigger,
-        expand it. Returns True if an expansion was performed.
-
-        Only the trailing token (run of non-whitespace characters) is considered,
-        so a trigger only fires as a standalone word followed by a delimiter.
+        If the end of the buffer matches a registered trigger, expand it immediately.
+        Returns True if an expansion was performed.
         """
         trigger = find_trigger(self.buffer, self._triggers)
         if trigger is None:

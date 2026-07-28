@@ -1,3 +1,17 @@
+rheolwyr (0.5.18-1) unstable; urgency=medium
+
+  * Release 0.5.18: Fixed dropped character on Wayland by waiting for
+    physical key release
+
+ -- Chuck Talk <chuck@nordheim.online>  Tue, 28 Jul 2026 08:52:46 -0500
+
+rheolwyr (0.5.14-1) unstable; urgency=medium
+
+  * Release 0.5.14: Fixed trigger expansion to fire instantly on shortcut entry
+    without requiring Space/Tab delimiters, backspacing all sigil characters cleanly.
+
+ -- Chuck Talk <chuck@nordheim.online>  Tue, 28 Jul 2026 08:50:00 -0500
+
 rheolwyr (0.5.13-1) unstable; urgency=medium
 
   * Release 0.5.13: Fixed dropped character on Wayland by waiting for

@@ -24,17 +24,25 @@ class TestTriggerMatching:
         assert find_trigger("addr", TRIGGERS) == "addr"
         assert find_trigger("hello addr", TRIGGERS) == "addr"
 
+    def test_instant_sigil_trigger_matches(self):
+        # Sigil triggers match instantly anywhere as soon as typed
+        assert find_trigger(";sig", TRIGGERS) == ";sig"
+        assert find_trigger("type;sig", TRIGGERS) == ";sig"
+        assert find_trigger("hello ;sig", TRIGGERS) == ";sig"
+
     def test_substring_does_not_fire(self):
-        # The classic bug: 'addr' must NOT fire while typing 'address'.
+        # Plain word trigger 'addr' must NOT fire while typing 'address'
         assert find_trigger("address", TRIGGERS) is None
         assert find_trigger("readdr", TRIGGERS) is None
+
+    def test_longest_trigger_precedence(self):
+        # Longest matching trigger takes precedence
+        extended_triggers = {";s": "Short", ";sig": "Long"}
+        assert find_trigger("hello ;sig", extended_triggers) == ";sig"
 
     def test_unknown_token(self):
         assert find_trigger("xyz", TRIGGERS) is None
         assert find_trigger("", TRIGGERS) is None
-
-    def test_punctuation_sigil_trigger(self):
-        assert find_trigger("type ;sig", TRIGGERS) == ";sig"
 
     def test_trailing_token_extraction(self):
         assert trailing_token("one two three") == "three"
