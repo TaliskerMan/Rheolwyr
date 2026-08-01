@@ -65,3 +65,4 @@ src/test_listener.py
 venv/
 
 .DS_Store
+sonar-project.properties
