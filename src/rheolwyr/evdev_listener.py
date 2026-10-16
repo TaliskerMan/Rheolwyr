@@ -127,9 +127,9 @@ class EvdevListener:
 
     def _poll_devices(self, fds):
         try:
-            r, w, x = select.select(fds, [], [], 0.5)
-        except Exception as exception:
-            logger.error("EvdevListener select error: %s", exception)
+            r, _, _ = select.select(fds, [], [], 0.5)
+        except Exception:
+            logger.exception("EvdevListener select error")
             return
 
         if not r:
@@ -175,8 +175,8 @@ class EvdevListener:
             if key_obj and self.on_press:
                 try:
                     self.on_press(key_obj)
-                except Exception as exception:
-                    logger.error("Error in on_press: %s", exception)
+                except Exception:
+                    logger.exception("Error in on_press")
 
     def _map_key(self, code):
         """

@@ -113,7 +113,7 @@ class SnippetListener(BaseListener):
                     self.keyboard_controller = UInputController()
                     logger.info("Using UInputController for injection")
                 except Exception as exception:
-                    logger.error("Failed to initialize UInputController: %s", exception)
+                    logger.exception("Failed to initialize UInputController")
                     # On Wayland, failure to get UInput means we likely can't inject.
                     # Raise error to notify user to check permissions.
                     raise PermissionError(f"Failed to initialize UInput: {exception}\nPlease ensure you are in the 'uinput' group.")
@@ -167,7 +167,7 @@ class SnippetListener(BaseListener):
 
                     return
                 except Exception as exception:
-                    logger.error("Failed to start EvdevListener: %s", exception)
+                    logger.exception("Failed to start EvdevListener")
                     raise PermissionError(f"Failed to start Input Listener: {exception}\nPlease ensure you are in the 'input' group.")
             else:
                 raise ImportError("evdev not found.")
@@ -176,8 +176,8 @@ class SnippetListener(BaseListener):
         try:
             self.listener = keyboard.Listener(on_press=self.on_press)
             self.listener.start()
-        except Exception as exception:
-            logger.error("Failed to start pynput Listener: %s", exception)
+        except Exception:
+            logger.exception("Failed to start pynput Listener")
 
     def stop(self):
         """

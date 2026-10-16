@@ -4,7 +4,7 @@ All notable changes to the Rheolwyr project are documented in this file. This pr
 
 ---
 
-## [Unreleased]
+## [0.5.19] - 2026-10-16
 
 ### Fixed — claims now match the code (2026-10-16 review)
 - **Triggers no longer fire inside words.** Instant matching made a letter

@@ -1,15 +1,6 @@
 #!/bin/bash
 set -e
 
-# Auto-increment version/build number
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WORKFLOW_TOOLS_DIR="$(cd "${SCRIPT_DIR}/../workflow-tools" 2>/dev/null && pwd || echo "")"
-if [ -n "$WORKFLOW_TOOLS_DIR" ] && [ -f "${WORKFLOW_TOOLS_DIR}/increment_build.py" ]; then
-    python3 "${WORKFLOW_TOOLS_DIR}/increment_build.py" "${SCRIPT_DIR}"
-else
-    echo "Warning: workflow-tools/increment_build.py not found, skipping increment"
-fi
-
 
 # Colors for output
 GREEN='\033[0;32m'
@@ -74,6 +65,13 @@ dpkg-buildpackage --sign-key="chuck@nordheim.online"
 # Move artifacts to artifacts
 mv ../rheolwyr_* artifacts/ 2>/dev/null || true
 echo "Debian package built and moved to artifacts/"
+
+# Create detached GPG signature for DEB packages per L-DEB-Packaging & L-Release
+for deb in artifacts/*.deb; do
+    if [ -f "$deb" ]; then
+        gpg --batch --yes --armor --detach-sign --local-user "chuck@nordheim.online" "$deb"
+    fi
+done
 
 # 3. Generate Hashes
 echo -e "\n${GREEN}[3/3] Generating Checksums...${NC}"

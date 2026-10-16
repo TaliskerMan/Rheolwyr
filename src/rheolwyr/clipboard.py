@@ -32,13 +32,12 @@ def copy(text):
     Tries wl-copy on Wayland, and falls back to xclip.
     """
     text_bytes = text.encode('utf-8')
-    if is_wayland():
-        if shutil.which("wl-copy"):
-            try:
-                subprocess.run(["wl-copy"], input=text_bytes, check=True)
-                return
-            except subprocess.CalledProcessError:
-                pass
+    if is_wayland() and shutil.which("wl-copy"):
+        try:
+            subprocess.run(["wl-copy"], input=text_bytes, check=True)
+            return
+        except subprocess.CalledProcessError:
+            pass
 
     # Fallback to xclip or if not wayland
     if shutil.which("xclip"):
@@ -51,13 +50,12 @@ def paste():
     """
     Paste raw byte contents from the system clipboard.
     """
-    if is_wayland():
-        if shutil.which("wl-paste"):
-            try:
-                result = subprocess.run(["wl-paste"], capture_output=True, check=True)
-                return result.stdout
-            except subprocess.CalledProcessError:
-                pass
+    if is_wayland() and shutil.which("wl-paste"):
+        try:
+            result = subprocess.run(["wl-paste"], capture_output=True, check=True)
+            return result.stdout
+        except subprocess.CalledProcessError:
+            pass
 
     if shutil.which("xclip"):
         try:

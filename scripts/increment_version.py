@@ -14,8 +14,11 @@ import subprocess
 import sys
 
 
+PYPROJECT_PATH = "pyproject.toml"
+
+
 def get_current_version():
-    with open("pyproject.toml", "r") as f:
+    with open(PYPROJECT_PATH, "r") as f:
         content = f.read()
         match = re.search(r'version\s*=\s*"(\d+\.\d+\.\d+)"', content)
         if match:
@@ -27,18 +30,18 @@ def increment_patch_version(version):
     return f"{major}.{minor}.{patch + 1}"
 
 def update_pyproject(new_version):
-    with open("pyproject.toml", "r") as f:
+    with open(PYPROJECT_PATH, "r") as f:
         content = f.read()
 
     new_content = re.sub(r'version\s*=\s*"\d+\.\d+\.\d+"', f'version = "{new_version}"', content)
 
-    with open("pyproject.toml", "w") as f:
+    with open(PYPROJECT_PATH, "w") as f:
         f.write(new_content)
     print(f"Updated pyproject.toml to version {new_version}")
 
 def update_changelog(new_version):
     # Use dch to add a new entry
-    subprocess.run(["dch", "-v", f"{new_version}-1", "--distribution", "unstable", f"Release {new_version}: Fixed dropped character on Wayland by waiting for physical key release"], check=True)
+    subprocess.run(["dch", "-v", f"{new_version}-1", "--distribution", "unstable", f"Release {new_version}: Hybrid trigger matching and overlapping symbol trigger fixes"], check=True)
     subprocess.run(["dch", "--release", ""], check=True)
     print(f"Updated debian/changelog to version {new_version}-1")
 

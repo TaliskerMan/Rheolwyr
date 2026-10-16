@@ -297,11 +297,12 @@ class RheolwyrWindow(BaseWindow):
             application_name="Rheolwyr",
             application_icon="com.taliskerman.rheolwyr",
             developer_name="Chuck Talk",
+            developers=["Chuck Talk <chuck@nordheim.online>"],
             version=importlib.metadata.version('rheolwyr'),
-            comments="Linux-native text expander for GNOME and Cosmic",
+            comments="Linux-native text expander for GNOME and Cosmic\nContact: chuck@nordheim.online",
             website="https://github.com/TaliskerMan/Rheolwyr",
-            copyright="© 2026 Chuck Talk",
-            license_type=Gtk.License.GPL_3_0
+            copyright="© 2026 Chuck Talk <chuck@nordheim.online>",
+            license_type=Gtk.License.GPL_3_0,
         )
         about.present()
 

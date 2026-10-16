@@ -129,12 +129,11 @@ class UInputController:
                  return self.shift_chars[char], True
              else:
                  return None, False
-        if isinstance(key, str):
-             if len(key) == 1:
-                 if key in self.char_map:
-                     return self.char_map[key], False
-                 elif key in self.shift_chars:
-                     return self.shift_chars[key], True
+        if isinstance(key, str) and len(key) == 1:
+            if key in self.char_map:
+                return self.char_map[key], False
+            elif key in self.shift_chars:
+                return self.shift_chars[key], True
 
         # Map common pynput Keys
         key_map = {

@@ -51,6 +51,45 @@ def is_word_trigger(trigger):
     return bool(trigger) and trigger[0].isalnum()
 
 
+def _match_word_trigger(buffer, trigger):
+    """
+    Check if the end of *buffer* completes a word trigger on a word boundary.
+
+    Returns ``(trigger, completer)`` if matched, else None.
+    """
+    ending = trigger + WORD_TRIGGER_COMPLETER
+    if not buffer.endswith(ending):
+        return None
+    start = len(buffer) - len(ending)
+    if start == 0 or not buffer[start - 1].isalnum():
+        return (trigger, WORD_TRIGGER_COMPLETER)
+    return None
+
+
+def _match_symbol_trigger(buffer, trigger, names, triggers):
+    """
+    Check if *buffer* completes a symbol trigger (immediate or delayed overlap).
+
+    Returns ``(trigger, completer)`` if matched, else None.
+    """
+    if buffer.endswith(trigger):
+        if not _could_still_become_longer(trigger, names):
+            return (trigger, "")
+        return None  # Wait: a longer trigger may be on its way
+
+    start = buffer.rfind(trigger)
+    if start < 0:
+        return None
+    tail = buffer[start:]
+    # Fire only on the key that ended the wait: the text was still a
+    # possible longer trigger one key ago, and no longer is.
+    if (_could_still_become_longer(tail[:-1], names)
+            and not _could_still_become_longer(tail, names)
+            and tail not in triggers):
+        return (trigger, tail[len(trigger):])
+    return None
+
+
 def find_expansion(buffer, triggers):
     """
     Decide whether the end of *buffer* (the text just typed) completes a trigger.
@@ -83,29 +122,11 @@ def find_expansion(buffer, triggers):
     candidates = []
     for trigger in names:
         if is_word_trigger(trigger):
-            ending = trigger + WORD_TRIGGER_COMPLETER
-            if not buffer.endswith(ending):
-                continue
-            start = len(buffer) - len(ending)
-            if start == 0 or not buffer[start - 1].isalnum():
-                candidates.append((trigger, WORD_TRIGGER_COMPLETER))
-            continue
-
-        # Symbol trigger.
-        if buffer.endswith(trigger):
-            if not _could_still_become_longer(trigger, names):
-                candidates.append((trigger, ""))
-            continue  # otherwise wait: a longer trigger may be on its way
-        start = buffer.rfind(trigger)
-        if start < 0:
-            continue
-        tail = buffer[start:]
-        # Fire only on the key that ended the wait: the text was still a
-        # possible longer trigger one key ago, and no longer is.
-        if (_could_still_become_longer(tail[:-1], names)
-                and not _could_still_become_longer(tail, names)
-                and tail not in triggers):
-            candidates.append((trigger, tail[len(trigger):]))
+            match = _match_word_trigger(buffer, trigger)
+        else:
+            match = _match_symbol_trigger(buffer, trigger, names, triggers)
+        if match:
+            candidates.append(match)
 
     if not candidates:
         return None

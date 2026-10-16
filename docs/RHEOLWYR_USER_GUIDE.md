@@ -17,7 +17,13 @@ Built on the core principles of privacy and control, Rheolwyr keeps your snippet
 
 ## 🚀 2. Core Capabilities & Expansion Modes
 
-Rheolwyr intercepts abbreviation triggers (e.g. `;sig`) and replaces them with configured text. **Note:** Expansion requires a word boundary (space or tab), so typing a longer word will not accidentally fire a substring trigger (e.g., typing `address` will not trigger an `addr ` snippet).
+Rheolwyr intercepts abbreviation triggers and seamlessly replaces them with configured text snippets.
+
+### Hybrid Trigger Matching
+- **Symbol Triggers:** Triggers starting with a symbol (e.g. `;sig`) expand immediately as soon as you finish typing them. If one symbol trigger is the prefix of another (e.g. `;s` and `;sig`), Rheolwyr waits and expands at the first key that rules the longer one out (keeping that key).
+- **Word Triggers:** Triggers starting with a letter or number (e.g. `addr`) expand only when typed as a whole word followed by **Space**. Typing a longer word like `address` will never trigger `addr`. The trailing space is preserved.
+- **Tab Protection:** Tab does not complete triggers and resets the match buffer, preventing misdirected backspaces when navigating between form fields.
+- **Window Requirement:** Rheolwyr expands snippets only while its window is open (minimized is fine). Closing the window exits the application.
 
 ### Expansion Modes
 

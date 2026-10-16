@@ -58,9 +58,8 @@ class RheolwyrApp(Adw.Application):
         Configure theme styling and load core settings on startup.
         """
         Adw.Application.do_startup(self)
-        # Verify theme usage
-        style_manager = Adw.StyleManager.get_default()
-        # This defaults to system preference, which supports both light and dark.
+        # Verify theme usage (defaults to system preference, supporting light and dark)
+        _ = Adw.StyleManager.get_default()
 
 
 def main():

@@ -1,3 +1,10 @@
+rheolwyr (0.5.19-1) unstable; urgency=medium
+
+  * Release 0.5.19: Hybrid trigger matching and overlapping symbol
+    trigger fixes
+
+ -- Chuck Talk <chuck@nordheim.online>  Fri, 16 Oct 2026 07:28:36 -0500
+
 rheolwyr (0.5.18-1) unstable; urgency=medium
 
   * Release 0.5.18: Fixed dropped character on Wayland by waiting for
