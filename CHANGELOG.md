@@ -4,6 +4,32 @@ All notable changes to the Rheolwyr project are documented in this file. This pr
 
 ---
 
+## [Unreleased]
+
+### Fixed — claims now match the code (2026-10-16 review)
+- **Triggers no longer fire inside words.** Instant matching made a letter
+  trigger fire as soon as it was typed, so with an `addr` snippet, typing
+  "address" became "123 Main St" + "ess" (likewise `teh` in "tehran"). Triggers
+  are now hybrid: symbol triggers (`;sig`) expand instantly; letter/number
+  triggers (`addr`) expand only as a whole word followed by Space, and the space
+  is kept.
+- **Overlapping symbol triggers work.** With `;s` and `;sig`, `;s` fired before
+  `;sig` could be finished, so `;sig` could never be typed. A symbol trigger that
+  is the start of a longer one now waits, and expands at the first key that rules
+  the longer one out (that key is kept).
+- **Tab no longer completes triggers** and now resets the match buffer: in forms
+  Tab moves to another field, where the erasing backspaces would land.
+- Tests now type text one key at a time; the old test only checked finished
+  strings, which is how the mid-word bug got through.
+
+### Removed (false claims)
+- "System Tray Support / runs in the background": there is no tray, and closing
+  the window quits. README and the in-app Instructions now say expansion runs
+  only while the window is open.
+- "Global Shortcuts": there are no shortcuts beyond text expansion itself.
+- README said the `.deb` grants the needed permissions; it doesn't add you to
+  the `input` group (by design). README version corrected to 0.5.18.
+
 ## [0.5.0] - 2026-06-23
 
 ### Security

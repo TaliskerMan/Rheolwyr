@@ -16,8 +16,13 @@ expansion-critical logic — the part most prone to silent regressions — can b
 unit-tested on any platform without the Linux desktop stack.
 """
 
-# Characters that complete a word (and may therefore trigger an expansion).
+# Characters that separate words in the match buffer.
 WORD_DELIMITERS = (" ", "\t")
+
+# The key that completes a letter/number ("word") trigger. Only Space: Tab is
+# deliberately excluded because in forms and browsers it moves focus to the
+# next field, and the backspaces that erase the trigger would then land there.
+WORD_TRIGGER_COMPLETER = " "
 
 # Shifted forms of the number row and punctuation keys (US layout).
 SHIFT_SYMBOLS = {
@@ -41,44 +46,85 @@ def trailing_token(buffer):
     return token
 
 
-def find_trigger(buffer, triggers):
-    """
-    Return the trigger that the end of *buffer* matches, or None.
+def is_word_trigger(trigger):
+    """True if *trigger* starts with a letter or digit (e.g. 'addr', 'brb')."""
+    return bool(trigger) and trigger[0].isalnum()
 
-    Instant expansion logic (CP-ChangeComments: Updated trigger matching to fire
-    immediately upon shortcut entry without requiring Space or Tab delimiters,
-    cleanly backspacing all shortcut characters including sigils like ';'):
-    1. A trigger matches if buffer ends with the trigger string.
-    2. Sigil triggers (starting with non-alphanumeric chars like ';', ':', '!', '+')
-       expand instantly whenever completed.
-    3. Plain word triggers expand instantly if preceded by a non-alphanumeric character
-       (or start of buffer) to prevent false positives while typing longer words (e.g. 'address').
-    4. If multiple triggers match, the longest trigger takes precedence (e.g. ';sig' over ';s').
+
+def find_expansion(buffer, triggers):
+    """
+    Decide whether the end of *buffer* (the text just typed) completes a trigger.
+
+    Returns ``(trigger, completer)`` or None. *completer* is whatever was
+    typed after the trigger that completed it: "" for a symbol trigger, " "
+    for a word trigger, or the extra keys typed after an overlapping symbol
+    trigger (rule 3). The caller erases ``trigger + completer``, types
+    ``snippet + completer`` (so those keys are kept), and restarts the buffer
+    from ``completer``.
+
+    Rules (hybrid):
+    1. Symbol triggers (first character not a letter/digit, e.g. ';sig', '+pp')
+       expand the moment they are complete, wherever they are typed.
+    2. Word triggers (e.g. 'addr', 'brb') expand only when followed by Space,
+       and only as a whole word: the character before them must be the start
+       of the buffer or a non-letter/digit. So typing "address" never fires
+       'addr', and "readdr " doesn't either.
+    3. Overlapping symbol triggers: if a symbol trigger is the start of a
+       longer one (';s' and ';sig'), it waits. Typing the longer one expands
+       the longer one; typing anything else expands the short one at the first
+       key that rules the longer one out, and that key is kept (returned in
+       *completer*). Without this, ';sig' could never be typed.
+    4. If several triggers complete at once, the longest wins.
     """
     if not buffer or not triggers:
         return None
 
-    matching_triggers = []
-    for trigger in triggers:
-        if not trigger:
+    names = [t for t in triggers if t]
+    candidates = []
+    for trigger in names:
+        if is_word_trigger(trigger):
+            ending = trigger + WORD_TRIGGER_COMPLETER
+            if not buffer.endswith(ending):
+                continue
+            start = len(buffer) - len(ending)
+            if start == 0 or not buffer[start - 1].isalnum():
+                candidates.append((trigger, WORD_TRIGGER_COMPLETER))
             continue
+
+        # Symbol trigger.
         if buffer.endswith(trigger):
-            # Check boundary condition for plain word triggers
-            first_char = trigger[0]
-            if not first_char.isalnum():
-                # Sigil trigger (e.g. ';sig', '+pp') -> instant match
-                matching_triggers.append(trigger)
-            else:
-                # Alphanumeric trigger (e.g. 'brb', 'addr') -> check preceding character
-                prefix_len = len(buffer) - len(trigger)
-                if prefix_len == 0 or not buffer[prefix_len - 1].isalnum():
-                    matching_triggers.append(trigger)
+            if not _could_still_become_longer(trigger, names):
+                candidates.append((trigger, ""))
+            continue  # otherwise wait: a longer trigger may be on its way
+        start = buffer.rfind(trigger)
+        if start < 0:
+            continue
+        tail = buffer[start:]
+        # Fire only on the key that ended the wait: the text was still a
+        # possible longer trigger one key ago, and no longer is.
+        if (_could_still_become_longer(tail[:-1], names)
+                and not _could_still_become_longer(tail, names)
+                and tail not in triggers):
+            candidates.append((trigger, tail[len(trigger):]))
 
-    if not matching_triggers:
+    if not candidates:
         return None
+    return max(candidates, key=lambda c: len(c[0]))
 
-    # Return the longest matching trigger to resolve overlaps (e.g. ';sig' over ';s')
-    return max(matching_triggers, key=len)
+
+def _could_still_become_longer(text, names):
+    """True if *text* is the start of some longer trigger in *names*."""
+    return any(len(n) > len(text) and n.startswith(text) for n in names)
+
+
+def find_trigger(buffer, triggers):
+    """
+    Return the trigger completed by the end of *buffer*, or None.
+
+    Thin wrapper around :func:`find_expansion` kept for existing callers.
+    """
+    match = find_expansion(buffer, triggers)
+    return match[0] if match else None
 
 
 def apply_shift_caps(base_char, shift, caps):

@@ -17,8 +17,10 @@ Rheolwyr is a text expander for Linux (GNOME/Cosmic).
    - Allow you to define triggers (e.g., `;sig`) and replacements.
 
 3. **Expansion**:
-   - Type your trigger (e.g., `;sig`).
+   - Type your trigger (e.g., `;sig`). Symbol triggers expand as soon as they're
+     complete; letter triggers (e.g., `brb`) expand after you press Space.
    - Rheolwyr will backspace the trigger and type the replacement.
+   - Rheolwyr expands only while its window is open (minimized is fine).
 
 ### Expansion Modes
 - **Short Snippets (< 50 chars)**: Rheolwyr simulates typing each character. This is the most robust method for terminals and Wayland.

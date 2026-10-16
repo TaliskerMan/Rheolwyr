@@ -24,7 +24,7 @@ import time
 
 from . import clipboard
 from .database import Database
-from .matching import find_trigger
+from .matching import find_expansion
 from ag_gtk_utils.listener import BaseListener
 
 logger = logging.getLogger(__name__)
@@ -58,19 +58,19 @@ except ImportError:
     EvdevListener = None
 
 
-# Keys that complete a word and may therefore trigger an expansion of the word
-# just typed. Keeping this to whitespace makes expansion predictable and avoids
-# firing a trigger in the middle of a longer word (e.g. "addr" inside
-# "address").
-_DELIMITER_KEYS = {Key.space: " ", Key.tab: "\t"}
+# Keys that end a word. Space completes word triggers such as "addr" (see
+# matching.find_expansion), so a trigger never fires in the middle of a longer
+# word like "address".
+_DELIMITER_KEYS = {Key.space: " "}
 
 # Keys that invalidate the buffer because they move the cursor or change focus,
 # so the in-memory buffer can no longer be trusted to mirror the real text.
+# Tab is here because in forms and browsers it moves focus to another field.
 _RESET_KEYS = {
     getattr(Key, name, None)
     for name in (
         "enter", "esc", "up", "down", "left", "right",
-        "home", "end", "page_up", "page_down", "delete",
+        "home", "end", "page_up", "page_down", "delete", "tab",
     )
 }
 _RESET_KEYS.discard(None)
@@ -189,11 +189,13 @@ class SnippetListener(BaseListener):
 
     def on_press(self, key):
         """
-        Handle a keypress: maintain the in-memory word buffer and check for instant trigger expansion.
+        Handle a keypress: maintain the in-memory word buffer and check for a
+        completed trigger.
 
-        Buffer rules: printable characters extend the buffer and trigger immediate
-        expansion checks (CP-ChangeComments: Instant trigger matching on keypress without space/tab);
-        delimiters and navigation keys update or reset the buffer as appropriate.
+        Buffer rules: printable characters and Space extend the buffer and are
+        checked against the triggers (symbol triggers complete on their last
+        character, word triggers on the Space after them); navigation, Enter
+        and Tab reset the buffer.
         """
         if not self.running:
             return
@@ -229,23 +231,28 @@ class SnippetListener(BaseListener):
 
     def _try_expand(self):
         """
-        If the end of the buffer matches a registered trigger, expand it immediately.
+        If the end of the buffer completes a registered trigger, expand it.
         Returns True if an expansion was performed.
         """
-        trigger = find_trigger(self.buffer, self._triggers)
-        if trigger is None:
+        match = find_expansion(self.buffer, self._triggers)
+        if match is None:
             return False
-        self.expand_snippet(trigger, self._triggers[trigger])
-        self.buffer = ""
+        trigger, completer = match
+        self.expand_snippet(trigger, self._triggers[trigger], completer)
+        # The keys after the trigger were re-typed, so they are still the
+        # start of the user's next word.
+        self.buffer = completer
         return True
 
-    def expand_snippet(self, trigger, content):
+    def expand_snippet(self, trigger, content, completer=""):
         """
         Replace the trigger text with the expanded snippet content.
 
-        Deletes the trigger characters and injects the content (direct typing for
+        Deletes the trigger characters (plus *completer*, the Space that
+        completed a word trigger) and injects the content (direct typing for
         short snippets, clipboard paste for long ones) via the selected keyboard
-        controller. Input is suppressed during and shortly after injection so the
+        controller, then re-types *completer* so the user's space is kept.
+        Input is suppressed during and shortly after injection so the
         synthetic keystrokes are not read back into the buffer.
         """
         logger.debug("Expanding trigger of length %d -> %d char(s)", len(trigger), len(content))
@@ -260,17 +267,19 @@ class SnippetListener(BaseListener):
                         break
                     time.sleep(0.01)
 
-            # 1. Backspace the trigger.
-            for _ in range(len(trigger)):
+            # 1. Backspace the trigger (and the Space that completed it).
+            for _ in range(len(trigger) + len(completer)):
                 self.keyboard_controller.tap(Key.backspace)
                 time.sleep(0.01)
 
             # 2. Inject content. Direct typing is more reliable on Wayland for
             #    short snippets; clipboard paste is faster for long ones.
             if len(content) < 50:
-                self.keyboard_controller.type(content)
+                self.keyboard_controller.type(content + completer)
             else:
                 self._paste_content(content)
+                if completer:
+                    self.keyboard_controller.type(completer)
         finally:
             # Hold the suppression window open briefly so queued synthetic
             # events (read after this call returns) are ignored.

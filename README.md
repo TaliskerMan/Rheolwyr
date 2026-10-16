@@ -1,7 +1,7 @@
 # <img src="data/rheolwyr.png" width="48" height="48" align="center" alt="Rheolwyr Icon"> Rheolwyr
 
 Linux text expander.
-Version 0.5.0
+Version 0.5.18
 Rheolwyr ("Manager" in Welsh), pronounced "Hre-aw-lur", is a Linux-native text snippet manager designed for Pop!_OS Cosmic and GNOME on Wayland.
 
 > **Security notice:** Rheolwyr reads your keystrokes globally to detect
@@ -12,18 +12,30 @@ Rheolwyr ("Manager" in Welsh), pronounced "Hre-aw-lur", is a Linux-native text s
 > [SECURITY.md](SECURITY.md) — including the least-privilege alternatives —
 > before enabling expansion.
 
-Triggers expand when followed by a **word boundary** (space or tab): typing a
-trigger such as `addr` followed by a space expands it, while typing `address`
-does not falsely fire it.
+**When triggers expand:**
+
+- Triggers that start with a **symbol**, such as `;sig`, expand as soon as you
+  finish typing them.
+- Triggers that start with a **letter or number**, such as `addr`, expand only
+  when typed as a whole word followed by **Space**. Typing `address` never fires
+  `addr`. (Tab doesn't complete a trigger, because in forms it moves to another
+  field.)
+- If one symbol trigger is the start of another (`;s` and `;sig`), typing
+  `;sig` expands `;sig`; `;s` expands at the first key that isn't part of
+  `;sig`, and that key is kept.
 
 ## Features
 
-- **Text Expansion**: Automatically expands keywords into snippets.
-- **Global Shortcuts**: Trigger snippets from any application.
+- **Text Expansion**: Expands your triggers into snippets in almost any application.
 - **Split-View Editor**: Manage and edit snippets easily.
+- **Import/Export**: Back up and restore snippets as JSON.
 - **Theme persistence**: Remembers your preferred theme.
-- **System Tray Support**: Runs in the background.
-- **Wayland & X11 Support**: Designed with modern Linux desktop standards.
+- **Wayland & X11 Support**: Works on GNOME and Pop!_OS COSMIC, on Wayland or X11.
+
+Rheolwyr expands snippets **only while its window is open** (minimized is
+fine). Closing the window quits it. There is no system-tray or background mode:
+for an app that reads your keystrokes, an open window is a clear sign that it is
+running.
 
 ## Screenshots
 
@@ -35,7 +47,7 @@ does not falsely fire it.
 
 ## Installation
 
-The recommended way to install Rheolwyr is via the native `.deb` package provided in the GitHub Releases. This ensures the application is installed globally and has the necessary permissions to expand text in the background.
+The recommended way to install Rheolwyr is via the native `.deb` package provided in the GitHub Releases. It installs Rheolwyr system-wide with the udev rule and kernel module it needs for typing on Wayland. It does **not** add you to the `input` group; that stays your choice (see *Enabling Text Expansion* below).
 
 1. Download the latest `rheolwyr_*_all.deb` package from the [Releases page](https://github.com/TaliskerMan/Rheolwyr/releases).
 2. Install the package using `apt` (this will automatically install required dependencies):
@@ -98,7 +110,8 @@ For text expansion to work, especially on Wayland, your user needs permission to
 
 -   **"Snippet not expanding"**:
     -   Verify you are in the groups: run `groups` and look for `input` and `uinput`.
-    -   Ensure `rheolwyr` is running (check system tray).
+    -   Ensure Rheolwyr's window is open (minimized is fine); closing it quits Rheolwyr.
+    -   Letter triggers such as `brb` need a **Space** after them.
 
 ## License
 

@@ -313,7 +313,7 @@ class RheolwyrWindow(BaseWindow):
         instructions_text = """
 <b>Welcome to Rheolwyr!</b>
 
-Rheolwyr is a Linux text expansion tool that runs in the background.
+Rheolwyr is a Linux text expander. It expands snippets while this window is open (minimized is fine). Closing the window quits Rheolwyr and stops expansion.
 
 <b>How to Use:</b>
 1. Create a "Snippet" by clicking the '+' button.
@@ -322,7 +322,10 @@ Rheolwyr is a Linux text expansion tool that runs in the background.
 4. Enter the <b>Snippet Content</b>. This is the text that will replace your trigger.
 5. Click Save.
 
-Once saved, whenever you type the Trigger Text in any text field across your system, it will be automatically replaced with the Snippet Content!
+<b>When triggers expand:</b>
+• A trigger that starts with a symbol, such as <b>;email</b>, expands as soon as you finish typing it.
+• A trigger that starts with a letter or number, such as <b>brb</b>, expands when you type it as a whole word and press <b>Space</b>. It never fires inside a longer word.
+• If one symbol trigger is the start of another (<b>;s</b> and <b>;sig</b>), the short one expands at the next key that isn't part of the long one.
 
 <b>Import/Export:</b>
 Use the menu to export your snippets to a JSON file for backup, or import snippets from a previously saved JSON file.
