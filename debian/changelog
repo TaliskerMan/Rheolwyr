@@ -1,3 +1,10 @@
+rheolwyr (0.5.20-1) unstable; urgency=medium
+
+  * Release 0.5.20: User guide update, pyclip dependency cleanup, and
+    hardened Debian release packaging
+
+ -- Chuck Talk <chuck@nordheim.online>  Fri, 23 Oct 2026 16:21:17 -0500
+
 rheolwyr (0.5.19-1) unstable; urgency=medium
 
   * Release 0.5.19: Hybrid trigger matching and overlapping symbol

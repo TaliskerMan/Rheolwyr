@@ -11,6 +11,7 @@
 
 import os
 import sys
+import unittest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
@@ -60,7 +61,7 @@ def type_text(text, triggers=TRIGGERS):
     return screen
 
 
-class TestWordTriggers:
+class TestWordTriggers(unittest.TestCase):
     def test_whole_word_followed_by_space_expands(self):
         assert type_text("addr ") == "123 Main St "
         assert type_text("send to addr now") == "send to 123 Main St now"
@@ -92,7 +93,7 @@ class TestWordTriggers:
         assert find_expansion("addr", TRIGGERS) is None
 
 
-class TestSymbolTriggers:
+class TestSymbolTriggers(unittest.TestCase):
     def test_expand_instantly(self):
         assert type_text(";sig") == "Best,\nChuck"
         assert find_expansion(";sig", {";sig": "x"}) == (";sig", "")
@@ -130,7 +131,7 @@ class TestSymbolTriggers:
         assert not is_word_trigger("")
 
 
-class TestBufferHelpers:
+class TestBufferHelpers(unittest.TestCase):
     def test_unknown_or_empty(self):
         assert find_trigger("xyz ", TRIGGERS) is None
         assert find_trigger("", TRIGGERS) is None
@@ -143,7 +144,7 @@ class TestBufferHelpers:
         assert trailing_token("trailing ") == ""
 
 
-class TestShiftCaps:
+class TestShiftCaps(unittest.TestCase):
     def test_letters_shift_xor_caps(self):
         assert apply_shift_caps("a", shift=False, caps=False) == "a"
         assert apply_shift_caps("a", shift=True, caps=False) == "A"

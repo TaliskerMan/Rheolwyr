@@ -4,6 +4,16 @@ All notable changes to the Rheolwyr project are documented in this file. This pr
 
 ---
 
+## [0.5.20] - 2026-10-23
+
+### Maintenance & Release Packaging
+- **Documentation & Guide Version Alignment:** Synchronized the official user guide documentation versioning and installation guidance with latest release tags.
+- **Dependency Cleanup:** Removed deprecated `pyclip` reference from `requirements.txt` as system clipboard operations are natively handled via GObject / Wayland clipboard integration.
+- **Test Discovery Modernization:** Refactored unit test classes to inherit from standard `unittest.TestCase` enabling zero-dependency test discovery (`python3 -m unittest discover tests`).
+- **Official Debian Release Pipeline:** Upgraded packaging automation with GPG detached ASCII-armored (`.asc`) and binary (`.sig`) signatures via Chuck Talk's maintainer key (`chuck@nordheim.online`), Syft CycloneDX SBOM generation, and multi-file SHA-512/SHA-256 integrity digests.
+
+---
+
 ## [0.5.19] - 2026-10-16
 
 ### Fixed — claims now match the code (2026-10-16 review)

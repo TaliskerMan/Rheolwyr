@@ -1,6 +1,6 @@
 title: Rheolwyr
 subtitle: Installation and User Guide
-version: 0.5.19 (with the October 2026 fixes)
+version: 0.5.20
 platforms: Linux (GNOME, COSMIC; Wayland and X11)
 ## About Rheolwyr
 
@@ -50,7 +50,7 @@ The repository's `SECURITY.md` explains these options in more detail.
 2. Install it:
 
 ```
-sudo apt install ./rheolwyr_0.5.19-1_all.deb
+sudo apt install ./rheolwyr_0.5.20-1_all.deb
 ```
 
    The installer creates a `uinput` group, installs a udev rule so that group can use the virtual keyboard (`/dev/uinput`), loads the `uinput` kernel module now and at every boot, and prints a security notice.
