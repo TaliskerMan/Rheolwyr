@@ -4,6 +4,15 @@ All notable changes to the Rheolwyr project are documented in this file. This pr
 
 ---
 
+## [0.5.21] - 2026-11-16
+
+### Security, Bug Fixes & SonarQube Cloud Remediation
+- **Fixed Missing `apply_shift_caps` Import in `EvdevListener` (`src/rheolwyr/evdev_listener.py`):** Imported `apply_shift_caps` from `.matching` so Wayland character key mapping no longer raises `NameError` at runtime, backed by unit tests in `tests/test_matching.py`.
+- **Remediated All 17 SonarQube Cloud Findings:** Fixed all `shell:S7688`, `shell:S6573`, and `shell:S7677` issues across `build_release.sh` and `run.sh`, migrated `docs/guide/build_guide.js` to Node ESM with `resolveContainedPath()` (`jssecurity:S8707`), and pinned `requirements.txt` (`text:S8565`).
+- **Rotated & Sanitized Logging (`src/rheolwyr/main.py`):** Configured `~/.cache/rheolwyr/rheolwyr.log` (`0600` permissions, 5 MiB rotation cap, CR/LF control-character sanitization).
+
+---
+
 ## [0.5.20] - 2026-10-23
 
 ### Maintenance & Release Packaging

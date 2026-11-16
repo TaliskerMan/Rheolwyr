@@ -1,3 +1,10 @@
+rheolwyr (0.5.21-1) unstable; urgency=medium
+
+  * Release 0.5.21: SonarQube Cloud quality gate remediation, EvdevListener
+    apply_shift_caps import fix, and rotated sanitized logging
+
+ -- Chuck Talk <chuck@nordheim.online>  Mon, 16 Nov 2026 16:25:00 -0600
+
 rheolwyr (0.5.20-1) unstable; urgency=medium
 
   * Release 0.5.20: User guide update, pyclip dependency cleanup, and

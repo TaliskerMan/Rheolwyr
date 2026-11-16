@@ -163,3 +163,22 @@ class TestShiftCaps(unittest.TestCase):
         assert apply_shift_caps("/", shift=True, caps=False) == "?"
         assert apply_shift_caps(";", shift=True, caps=False) == ":"
         assert apply_shift_caps(".", shift=False, caps=False) == "."
+
+
+class TestEvdevListenerKeyMapping(unittest.TestCase):
+    def test_evdev_listener_maps_chars_and_modifiers_without_name_error(self):
+        import evdev
+        from rheolwyr.evdev_listener import EvdevListener, Key
+
+        listener = EvdevListener()
+        assert listener._map_key(evdev.ecodes.KEY_A).char == "a"
+
+        listener.modifiers["shift"] = True
+        assert listener._map_key(evdev.ecodes.KEY_A).char == "A"
+        assert listener._map_key(evdev.ecodes.KEY_SEMICOLON).char == ":"
+
+        listener.modifiers["shift"] = False
+        listener.modifiers["caps"] = True
+        assert listener._map_key(evdev.ecodes.KEY_A).char == "A"
+        assert listener._map_key(evdev.ecodes.KEY_SPACE) == Key.space
+

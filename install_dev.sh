@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # This script installs the desktop file and icon to the user's local directory.
 # This makes the app appear in the application menu with the correct icon.
@@ -10,7 +10,6 @@ echo "Installing Desktop file and Icon locally..."
 mkdir -p ~/.local/share/applications
 cp data/com.taliskerman.rheolwyr.desktop ~/.local/share/applications/
 
-# Install Icon
 # Install Icon
 mkdir -p ~/.local/share/icons/hicolor
 cp -r data/icons/hicolor/* ~/.local/share/icons/hicolor/

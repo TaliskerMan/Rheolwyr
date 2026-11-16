@@ -2,6 +2,9 @@
 # Copyright (C) 2026 Chuck Talk <chuck@nordheim.online>
 # Licensed under GPLv3 or later
 
+import logging
+from logging.handlers import RotatingFileHandler
+import os
 import signal
 import sys
 
@@ -14,6 +17,48 @@ from gi.repository import Adw, Gio, GLib
 
 from .listener import SnippetListener
 from .window import RheolwyrWindow
+
+
+class _SanitizingFormatter(logging.Formatter):
+    """Sanitize CR/LF control characters from log messages (Log Sanitization rule)."""
+
+    def format(self, record: logging.LogRecord) -> str:
+        rendered = super().format(record)
+        return rendered.replace("\r", "\\r").replace("\n", "\\n")
+
+
+def setup_logging():
+    """Configure application file logging under ~/.cache/rheolwyr/rheolwyr.log (0600, 5 MiB cap)."""
+    log_dir = os.path.expanduser("~/.cache/rheolwyr")
+    os.makedirs(log_dir, mode=0o700, exist_ok=True)
+    os.chmod(log_dir, 0o700)
+    log_file = os.path.join(log_dir, "rheolwyr.log")
+
+    if not os.path.exists(log_file):
+        try:
+            fd = os.open(log_file, os.O_WRONLY | os.O_CREAT, 0o600)
+            os.close(fd)
+        except OSError:
+            pass
+    else:
+        try:
+            os.chmod(log_file, 0o600)
+        except OSError:
+            pass
+
+    handler = RotatingFileHandler(
+        log_file,
+        maxBytes=5 * 1024 * 1024,
+        backupCount=2,
+        encoding="utf-8",
+    )
+    handler.setFormatter(
+        _SanitizingFormatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s")
+    )
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
+    root_logger.handlers.clear()
+    root_logger.addHandler(handler)
 
 
 class RheolwyrApp(Adw.Application):
@@ -50,7 +95,7 @@ class RheolwyrApp(Adw.Application):
             self.listener = SnippetListener()
             self.listener.start()
         except Exception as exception:
-            print(f"Error starting listener: {exception}")
+            logging.exception("Error starting listener")
             self.window.show_error_dialog(str(exception))
 
     def do_startup(self):
@@ -66,12 +111,14 @@ def main():
     """
     Bootstrap the application process, handle interrupts (SIGINT), and launch the loop.
     """
+    setup_logging()
     GLib.set_prgname('com.taliskerman.rheolwyr')
     GLib.set_application_name('Rheolwyr')
     app = RheolwyrApp()
     # Handle Ctrl+C
     GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, signal.SIGINT, app.quit)
     return app.run(sys.argv)
+
 
 if __name__ == '__main__':
     main()

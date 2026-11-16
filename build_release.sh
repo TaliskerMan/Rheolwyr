@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # Colors for output
 GREEN='\033[0;32m'
@@ -12,7 +12,7 @@ echo "---------------------"
 # Set Maintainer Identity for GPG Signing and Changelog
 export DEBFULLNAME="Chuck Talk"
 export DEBEMAIL="chuck@nordheim.online"
-GPG_KEY="chuck@nordheim.online"
+GPG_KEY="$DEBEMAIL"
 
 # 1. Check Dependencies
 echo -e "\n${GREEN}[1/4] Checking Dependencies...${NC}"
@@ -22,9 +22,9 @@ if ! dpkg -s dh-python >/dev/null 2>&1; then MISSING_DEPS+=("dh-python"); fi
 if ! dpkg -s python3-all >/dev/null 2>&1; then MISSING_DEPS+=("python3-all"); fi
 if ! dpkg -s pybuild-plugin-pyproject >/dev/null 2>&1; then MISSING_DEPS+=("pybuild-plugin-pyproject"); fi
 
-if [ ${#MISSING_DEPS[@]} -ne 0 ]; then
-    echo -e "${RED}Missing dependencies: ${MISSING_DEPS[*]}${NC}"
-    echo "Please install missing packages before continuing."
+if [[ ${#MISSING_DEPS[@]} -ne 0 ]]; then
+    echo -e "${RED}Missing dependencies: ${MISSING_DEPS[*]}${NC}" >&2
+    echo "Please install missing packages before continuing." >&2
     exit 1
 else
     echo "All dependencies installed."
@@ -35,7 +35,7 @@ rm -rf artifacts
 mkdir -p artifacts
 
 # 2. Increment Version & Run Tests
-if [ "$1" != "--no-bump" ]; then
+if [[ "${1:-}" != "--no-bump" ]]; then
     python3 scripts/increment_version.py
 fi
 
@@ -48,16 +48,31 @@ python3 -m unittest discover tests
 # Generate SBOM
 echo "Generating CycloneDX SBOM via Syft..."
 mkdir -p Audit
+SBOM_JSON_PATH="Audit/SBOM-Linux.json"
 syft dir:. \
     --exclude "./artifacts" \
     --exclude "./debian" \
     --exclude "./build" \
+    --exclude "./build-dir" \
+    --exclude "./.flatpak-builder" \
     --exclude "./.pybuild" \
+    --exclude "./.venv" \
+    --exclude "./venv" \
+    --exclude "./.git" \
     --exclude "./Audit" \
     --exclude "./*.deb" \
     --exclude "./*.tar.gz" \
-    -o cyclonedx-json > Audit/SBOM-Linux.json
-cp Audit/SBOM-Linux.json Audit/sbom.json
+    -o cyclonedx-json > "${SBOM_JSON_PATH}"
+# shellcheck disable=SC2016
+python3 -c '
+import pathlib, re, sys
+p = pathlib.Path(sys.argv[1])
+if p.exists():
+    raw = p.read_text(encoding="utf-8")
+    cleaned = re.sub(r"/(?:Users|home)/[^/\"\\]+", "$HOME", raw)
+    p.write_text(cleaned, encoding="utf-8")
+' "${SBOM_JSON_PATH}"
+cp "${SBOM_JSON_PATH}" Audit/sbom.json
 
 # 3. Build Debian Package
 echo -e "\n${GREEN}[3/4] Building Debian Package (Signed)...${NC}"
@@ -67,14 +82,16 @@ tar --exclude=debian --exclude=.git --exclude=artifacts --exclude=Audit --exclud
 dpkg-buildpackage --sign-key="${GPG_KEY}"
 
 # Move artifacts to artifacts
-mv ../rheolwyr_${NEW_VERSION}* artifacts/ 2>/dev/null || true
+mv "../rheolwyr_${NEW_VERSION}"* artifacts/ 2>/dev/null || true
 echo "Debian package built and moved to artifacts/"
 
 # Create detached GPG signature for DEB packages per L-DEB-Packaging & L-Release
 for deb in artifacts/*.deb; do
-    if [ -f "$deb" ]; then
+    if [[ -f "$deb" ]]; then
         gpg --batch --yes --armor --pinentry-mode loopback --detach-sign --local-user "${GPG_KEY}" "$deb"
         gpg --batch --yes --pinentry-mode loopback --detach-sign --output "${deb}.sig" --local-user "${GPG_KEY}" "$deb"
+        sha512sum "$deb" > "${deb}.sha512"
+        sha256sum "$deb" > "${deb}.sha256"
     fi
 done
 
@@ -82,18 +99,11 @@ done
 gpg --batch --yes --armor --export "${GPG_KEY}" > artifacts/pubkey.asc
 cp artifacts/pubkey.asc artifacts/chuck_pubkey.asc
 
-# Generate single-file and multi-file checksums
-for deb in artifacts/*.deb; do
-    if [ -f "$deb" ]; then
-        sha512sum "$deb" > "${deb}.sha512"
-        sha256sum "$deb" > "${deb}.sha256"
-    fi
-done
-
-cd artifacts
-sha512sum * > SHA512SUMS
-sha256sum * > SHA256SUMS
-cd ..
+(
+    cd artifacts
+    sha512sum -- ./* > SHA512SUMS
+    sha256sum -- ./* > SHA256SUMS
+)
 
 # 4. Copy to NOBuilds directory
 echo -e "\n${GREEN}[4/4] Copying to NOBuilds directory...${NC}"
@@ -104,12 +114,12 @@ mkdir -p "${NOBUILDS_DIR}"
 cp artifacts/* "${NOBUILDS_DIR}/" || true
 cp LICENSE "${NOBUILDS_DIR}/" || true
 cp README.md "${NOBUILDS_DIR}/" || true
-cp Audit/SBOM-Linux.json "${NOBUILDS_DIR}/" || true
+cp "${SBOM_JSON_PATH}" "${NOBUILDS_DIR}/" || true
 cp Audit/sbom.json "${NOBUILDS_DIR}/" || true
-if [ -f "Audit/security_report.md" ]; then
+if [[ -f "Audit/security_report.md" ]]; then
     cp Audit/security_report.md "${NOBUILDS_DIR}/"
 fi
-if [ -f "docs/Rheolwyr_User_Guide.pdf" ]; then
+if [[ -f "docs/Rheolwyr_User_Guide.pdf" ]]; then
     cp docs/Rheolwyr_User_Guide.pdf "${NOBUILDS_DIR}/"
     cp docs/Rheolwyr_User_Guide.pdf artifacts/
 fi
@@ -122,13 +132,13 @@ cp "${NOBUILDS_DIR}/rheolwyr_source.tar.gz" artifacts/
 # Refresh multi-file checksums in NOBuilds and artifacts
 (
     cd "${NOBUILDS_DIR}"
-    sha512sum * > SHA512SUMS 2>/dev/null || true
-    sha256sum * > SHA256SUMS 2>/dev/null || true
+    sha512sum -- ./* > SHA512SUMS 2>/dev/null || true
+    sha256sum -- ./* > SHA256SUMS 2>/dev/null || true
 )
 (
     cd artifacts
-    sha512sum * > SHA512SUMS 2>/dev/null || true
-    sha256sum * > SHA256SUMS 2>/dev/null || true
+    sha512sum -- ./* > SHA512SUMS 2>/dev/null || true
+    sha256sum -- ./* > SHA256SUMS 2>/dev/null || true
 )
 
 echo -e "${GREEN}SUCCESS!${NC}"

@@ -1,4 +1,6 @@
 #!/bin/bash
+set -euo pipefail
+
 # Convenient script to run Rheolwyr from source
 # This correctly sets up the PYTHONPATH so relative imports work
 
@@ -6,12 +8,12 @@
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 PROJECT_ROOT="$SCRIPT_DIR"
 
-if [ ! -d "$PROJECT_ROOT/src" ]; then
-    echo "Error: src directory not found in $PROJECT_ROOT"
+if [[ ! -d "$PROJECT_ROOT/src" ]]; then
+    echo "Error: src directory not found in $PROJECT_ROOT" >&2
     exit 1
 fi
 
-export PYTHONPATH="$PROJECT_ROOT/src:$PYTHONPATH"
+export PYTHONPATH="$PROJECT_ROOT/src:${PYTHONPATH:-}"
 
 # Run the module
 python3 -m rheolwyr.main "$@"

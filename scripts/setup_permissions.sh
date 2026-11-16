@@ -1,8 +1,7 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 echo "Setting up permissions for Rheolwyr text expansion on Wayland..."
-
 
 # 0. Install dependencies
 echo "Installing dependencies..."
@@ -14,7 +13,7 @@ elif command -v dnf &> /dev/null; then
 elif command -v pacman &> /dev/null; then
     sudo pacman -S --noconfirm python-evdev python-pynput python-gobject
 else
-    echo "Could not detect package manager. Please install 'python3-evdev' manually."
+    echo "Could not detect package manager. Please install 'python3-evdev' manually." >&2
 fi
 
 # 1. Create uinput group if it doesn't exist
@@ -25,8 +24,8 @@ fi
 
 # 2. Add user to input and uinput groups
 echo "Adding user '$USER' to 'input' and 'uinput' groups..."
-sudo usermod -aG input $USER
-sudo usermod -aG uinput $USER
+sudo usermod -aG input "$USER"
+sudo usermod -aG uinput "$USER"
 
 # 3. Create udev rule for uinput
 echo "Creating udev rule for /dev/uinput..."

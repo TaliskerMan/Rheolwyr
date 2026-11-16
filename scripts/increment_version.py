@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (C) 2026 Chuck Talk <cwtalk1@gmail.com>
+# Copyright (C) 2026 Chuck Talk <chuck@nordheim.online>
 # This file is part of Rheolwyr.
 #
 # Rheolwyr is free software: you can redistribute it and/or modify

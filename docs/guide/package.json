@@ -1,0 +1,7 @@
+{
+  "name": "rheolwyr-user-guide",
+  "version": "0.5.21",
+  "private": true,
+  "type": "module",
+  "description": "Rheolwyr User Guide PDF builder"
+}

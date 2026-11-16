@@ -1,6 +1,6 @@
 title: Rheolwyr
 subtitle: Installation and User Guide
-version: 0.5.20
+version: 0.5.21
 platforms: Linux (GNOME, COSMIC; Wayland and X11)
 ## About Rheolwyr
 

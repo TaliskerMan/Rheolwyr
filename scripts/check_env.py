@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright (C) 2026 Chuck Talk <cwtalk1@gmail.com>
+# Copyright (C) 2026 Chuck Talk <chuck@nordheim.online>
 # This file is part of Rheolwyr.
 #
 # Rheolwyr is free software: you can redistribute it and/or modify
@@ -9,15 +9,16 @@
 # Rheolwyr is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY. See the GNU AGPL v3 for details.
 
+import grp
+import importlib.util
 import os
 
 print("Checking environment for Rheolwyr...")
 
 # Check text expansion dependencies
-try:
-    import evdev
+if importlib.util.find_spec("evdev") is not None:
     print("[PASS] evdev is installed.")
-except ImportError:
+else:
     print("[FAIL] evdev is NOT installed. Please run scripts/setup_permissions.sh or install python3-evdev.")
 
 if os.access("/dev/uinput", os.W_OK):
@@ -26,17 +27,13 @@ else:
     print("[FAIL] /dev/uinput is NOT writable. You may need to run scripts/setup_permissions.sh and REBOOT or LOGOUT.")
 
 # Check pynput
-try:
-    from pynput import keyboard
+if importlib.util.find_spec("pynput") is not None:
     print("[PASS] pynput is installed.")
-except ImportError:
+else:
     print("[FAIL] pynput is NOT installed.")
 
 # Check groups
-import grp
-import os
-
-user = os.environ.get('USER', 'freecode')
+user = os.environ.get("USER", "freecode")
 try:
     groups = [g.gr_name for g in grp.getgrall() if user in g.gr_mem]
     gid = os.getgid()
@@ -45,7 +42,7 @@ try:
 
     print(f"User '{user}' groups: {groups}")
 
-    if 'input' in groups and 'uinput' in groups:
+    if "input" in groups and "uinput" in groups:
         print("[PASS] User is in 'input' and 'uinput' groups.")
     else:
         print("[FAIL] User is MISSING from 'input' or 'uinput' groups.")

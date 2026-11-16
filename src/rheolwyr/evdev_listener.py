@@ -15,6 +15,8 @@ import threading
 
 import evdev
 
+from .matching import apply_shift_caps
+
 logger = logging.getLogger(__name__)
 
 # Name of our own virtual injection device. We must never listen to it, or the
